@@ -159,7 +159,7 @@ function CategoryNode({
           <button
             type="button"
             onClick={toggle}
-            className="aspect-square flex items-center justify-center w-[1.75rem] border border-muted hover:underline focus:underline"
+            className="aspect-square flex items-center justify-center w-[1.75rem] border-y border-l border-muted hover:underline focus:underline"
             aria-expanded={open}
             aria-label={open ? `Collapse ${node.label}` : `Expand ${node.label}`}
           >
