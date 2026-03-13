@@ -135,7 +135,7 @@ function CategoryNode({
           <button
             type="button"
             onClick={toggle}
-            className={`px-hsp-xl py-vsp-xs hover:underline focus:underline ${open ? "border-l border-b border-muted" : "border-l border-muted"}`}
+            className="px-hsp-xl py-vsp-xs hover:underline focus:underline border border-muted"
             aria-expanded={open}
             aria-label={open ? `Collapse ${node.label}` : `Expand ${node.label}`}
           >
