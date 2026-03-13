@@ -65,15 +65,13 @@ jobs:
         run: |
           mkdir -p deploy/pj/zcss
           cp -r doc/dist/* deploy/pj/zcss/
-      - name: Install wrangler
-        run: npm install -g wrangler
       - name: Deploy preview
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          wrangler pages deploy deploy \
+          pnpm dlx wrangler pages deploy deploy \
             --project-name=zudo-css \
             --branch="pr-${PR_NUMBER}" \
             --commit-hash=${GITHUB_SHA} \
