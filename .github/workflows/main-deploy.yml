@@ -124,5 +124,5 @@ jobs:
 
           curl -s -o /dev/null \
             -H "Content-Type: application/json" \
-            -d "{\"value1\":\"zudo-css\",\"value2\":\"$STATUS\",\"value3\":\"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
+            -d "{\"value1\":\"zudo-css: $STATUS\",\"value2\":\"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\",\"value3\":\"\"}" \
             "$IFTTT_PROD_NOTIFY"
