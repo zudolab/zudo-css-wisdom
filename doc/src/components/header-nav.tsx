@@ -13,7 +13,9 @@ interface HeaderNavProps {
 const GAP_REM = 0.125; // gap-x-hsp-2xs
 
 function getGapPx() {
-  return GAP_REM * parseFloat(getComputedStyle(document.documentElement).fontSize);
+  return (
+    GAP_REM * parseFloat(getComputedStyle(document.documentElement).fontSize)
+  );
 }
 
 export default function HeaderNav({ items }: HeaderNavProps) {
@@ -23,6 +25,9 @@ export default function HeaderNav({ items }: HeaderNavProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const [visibleCount, setVisibleCount] = useState(items.length);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Stable key for item content (labels affect measured widths)
+  const itemsKey = items.map((i) => i.label).join("\t");
 
   const recalculate = useCallback(() => {
     const nav = navRef.current;
@@ -64,7 +69,7 @@ export default function HeaderNav({ items }: HeaderNavProps) {
     }
 
     setVisibleCount(Math.max(1, count));
-  }, [items.length]);
+  }, [itemsKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Initial calculation + resize observer
   useEffect(() => {
@@ -111,12 +116,22 @@ export default function HeaderNav({ items }: HeaderNavProps) {
     };
   }, [menuOpen]);
 
+  // Focus first dropdown item when menu opens
+  useEffect(() => {
+    if (menuOpen && menuRef.current) {
+      const firstLink = menuRef.current.querySelector<HTMLAnchorElement>("a");
+      firstLink?.focus();
+    }
+  }, [menuOpen]);
+
   // Close on Astro View Transition navigation
   useEffect(() => {
     const handleSwap = () => setMenuOpen(false);
     document.addEventListener("astro:after-swap", handleSwap);
     return () => document.removeEventListener("astro:after-swap", handleSwap);
   }, []);
+
+  if (items.length === 0) return null;
 
   const visibleItems = items.slice(0, visibleCount);
   const overflowItems = items.slice(visibleCount);
@@ -136,8 +151,6 @@ export default function HeaderNav({ items }: HeaderNavProps) {
           position: "absolute",
           visibility: "hidden",
           pointerEvents: "none",
-          height: 0,
-          overflow: "hidden",
           whiteSpace: "nowrap",
           display: "flex",
           gap: `${GAP_REM}rem`,
@@ -183,26 +196,25 @@ export default function HeaderNav({ items }: HeaderNavProps) {
           type="button"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-expanded={menuOpen}
-          aria-haspopup="menu"
+          aria-haspopup="true"
+          aria-label="More navigation items"
           className="shrink-0 px-hsp-md py-vsp-2xs text-small font-medium text-muted transition-colors hover:underline focus:underline"
         >
-          &middot;&middot;&middot;
+          <span aria-hidden="true">&middot;&middot;&middot;</span>
         </button>
       )}
 
-      {/* Dropdown menu for overflowed items */}
+      {/* Dropdown for overflowed items */}
       {menuOpen && hasOverflow && (
         <div
           ref={menuRef}
-          role="menu"
           className="absolute right-0 top-full z-50 mt-px min-w-[10rem] border border-muted bg-surface py-vsp-2xs"
-          style={{ boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)" }}
+          style={{ boxShadow: "0 4px 12px color-mix(in srgb, var(--zd-bg) 50%, transparent)" }}
         >
           {overflowItems.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              role="menuitem"
               aria-current={item.isActive ? "page" : undefined}
               className={`block px-hsp-lg py-vsp-2xs text-small font-medium whitespace-nowrap transition-colors ${
                 item.isActive
