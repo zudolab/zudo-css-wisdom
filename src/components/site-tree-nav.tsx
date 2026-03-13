@@ -31,14 +31,23 @@ interface SiteTreeNavProps {
   tree: NavNode[];
   ariaLabel?: string;
   categoryOrder?: string[];
+  categoryIgnore?: string[];
 }
 
 export default function SiteTreeNav({
   tree,
   ariaLabel = "Site index",
   categoryOrder,
+  categoryIgnore,
 }: SiteTreeNavProps) {
-  const orderedTree = categoryOrder ? reorderTree(tree, categoryOrder) : tree;
+  let processedTree = tree;
+  if (categoryIgnore) {
+    const ignoreSet = new Set(categoryIgnore);
+    processedTree = processedTree.filter((node) => !ignoreSet.has(node.slug));
+  }
+  if (categoryOrder) {
+    processedTree = reorderTree(processedTree, categoryOrder);
+  }
   return (
     <nav
       aria-label={ariaLabel}
@@ -47,7 +56,7 @@ export default function SiteTreeNav({
         gridTemplateColumns: "repeat(auto-fill, minmax(min(18rem, 100%), 1fr))",
       }}
     >
-      {orderedTree.map((node) => (
+      {processedTree.map((node) => (
         <div key={node.slug} className="min-w-0 border border-muted">
           {node.children.length > 0 ? (
             <CategoryNode node={node} depth={0} isLast={true} />
@@ -135,13 +144,13 @@ function CategoryNode({
           <button
             type="button"
             onClick={toggle}
-            className="px-hsp-xl py-vsp-xs hover:underline focus:underline border border-muted"
+            className="aspect-square flex items-center justify-center w-[1.75rem] border border-muted hover:underline focus:underline"
             aria-expanded={open}
             aria-label={open ? `Collapse ${node.label}` : `Expand ${node.label}`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className={`h-[1rem] w-[1rem] transition-transform duration-150 ${open ? "rotate-90" : ""} text-muted`}
+              className={`h-[0.75rem] w-[0.75rem] transition-transform duration-150 ${open ? "rotate-90" : ""} text-muted`}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

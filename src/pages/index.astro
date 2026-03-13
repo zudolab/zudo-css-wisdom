@@ -13,6 +13,8 @@ import SiteTreeNav from "@/components/site-tree-nav.tsx";
 
 const ctaNav = settings.headerNav[0] ?? null;
 const overview = ctaNav ? withBase(ctaNav.path) : null;
+const logoUrl = withBase("/img/logo.svg");
+const categoryOrder = settings.headerNav.map((n) => n.categoryMatch).filter((v): v is string => !!v);
 
 // Build full nav tree for site index
 const { allDocs, categoryMeta } = await loadLocaleDocs("en");
@@ -38,36 +40,50 @@ const tree = buildNavTree(navDocs, "en", categoryMeta);
     </Header>
 
     <main class="mx-auto max-w-[80rem] px-hsp-xl py-vsp-xl lg:px-hsp-2xl lg:py-vsp-2xl">
-      <!-- Hero: logo + title + links -->
-      <div class="flex flex-col items-center text-center mb-vsp-xl">
-        <div class="flex items-center gap-hsp-lg mb-vsp-sm">
-          <img src={withBase("/img/logo.svg")} alt="" class="h-[4rem] w-[4rem] lg:h-[5rem] lg:w-[5rem]" aria-hidden="true" />
+      <!-- Hero: LR split -->
+      <div class="flex flex-col sm:flex-row sm:items-center gap-hsp-xl mb-vsp-xl">
+        <!-- Left: logo + title -->
+        <div class="flex items-center gap-hsp-lg shrink-0">
+          <div
+            class="h-[4rem] w-[4rem] lg:h-[5rem] lg:w-[5rem] bg-fg shrink-0"
+            style={`-webkit-mask: url(${logoUrl}) center/contain no-repeat; mask: url(${logoUrl}) center/contain no-repeat;`}
+            role="img"
+            aria-hidden="true"
+          />
           <h1 class="text-heading font-bold">{settings.siteName}</h1>
         </div>
-        <p class="text-muted text-small mb-vsp-md">{settings.siteDescription}</p>
-        <div class="flex items-center gap-hsp-md text-small">
-          {overview && (
-            <a href={overview} class="text-fg underline hover:text-accent">Overview</a>
-          )}
-          <span class="text-muted">/</span>
-          <a
-            href="https://github.com/zudolab/zudo-css"
-            class="text-fg underline hover:text-accent"
-            target="_blank"
-            rel="noopener noreferrer"
-          >GitHub</a>
-          <span class="text-muted">/</span>
-          <a
-            href="https://x.com/Takazudo"
-            class="text-fg underline hover:text-accent"
-            target="_blank"
-            rel="noopener noreferrer"
-          >@Takazudo</a>
+        <!-- Right: description + links -->
+        <div>
+          <p class="text-muted text-small mb-vsp-sm">{settings.siteDescription}</p>
+          <div class="flex items-center gap-hsp-md text-small">
+            {overview && (
+              <a href={overview} class="text-fg underline hover:text-accent">Overview</a>
+            )}
+            <span class="text-muted">/</span>
+            <a
+              href="https://github.com/zudolab/zudo-css"
+              class="text-fg underline hover:text-accent"
+              target="_blank"
+              rel="noopener noreferrer"
+            >GitHub</a>
+            <span class="text-muted">/</span>
+            <a
+              href="https://x.com/Takazudo"
+              class="text-fg underline hover:text-accent"
+              target="_blank"
+              rel="noopener noreferrer"
+            >@Takazudo</a>
+          </div>
         </div>
       </div>
 
       <!-- Sitemap grid -->
-      <SiteTreeNav tree={tree} client:idle />
+      <SiteTreeNav
+        tree={tree}
+        categoryOrder={categoryOrder}
+        categoryIgnore={["inbox"]}
+        client:idle
+      />
     </main>
     <PageLoadingOverlay />
   </body>
