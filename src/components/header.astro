@@ -6,7 +6,7 @@ import ThemeToggle from "@/components/theme-toggle";
 import LanguageSwitcher from "@/components/language-switcher.astro";
 import Search from "@/components/search.astro";
 import { settings } from "@/config/settings";
-import { withBase, stripBase } from "@/utils/base";
+import { withBase, stripBase, getPathForLocale } from "@/utils/base";
 import { defaultLocale, locales, getLocaleLabel, t, type Locale } from "@/config/i18n";
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
   currentPath?: string;
 }
 
-const { lang, currentPath = "" } = Astro.props;
+const { lang, currentPath = Astro.url.pathname } = Astro.props;
 const isNonDefaultLocale = lang != null && lang !== defaultLocale;
 const pathWithoutBase = stripBase(currentPath);
 const pathForMatch = isNonDefaultLocale ? pathWithoutBase.replace(new RegExp(`^/${lang}`), "") : pathWithoutBase;
@@ -31,17 +31,6 @@ const navItems = settings.headerNav.map((item) => ({
 }));
 
 // Prepare locale links for the mobile sidebar
-function getPathForLocale(path: string, currentLang: string, targetLang: string): string {
-  let relativePath = stripBase(path);
-  if (currentLang !== defaultLocale) {
-    relativePath = relativePath.replace(new RegExp(`^/${currentLang}/`), "/");
-  }
-  if (targetLang !== defaultLocale) {
-    relativePath = `/${targetLang}${relativePath}`;
-  }
-  return withBase(relativePath);
-}
-
 const localeLinks = lang && locales.length > 1
   ? locales.map((code) => ({
       code,

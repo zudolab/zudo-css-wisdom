@@ -128,7 +128,7 @@ export default function SidebarToggle({
                   <span key={link.code}>
                     {i > 0 && <span className="text-muted">/</span>}
                     {link.isCurrent ? (
-                      <span className="font-medium text-fg ml-hsp-xs">
+                      <span aria-current="true" className="font-medium text-fg ml-hsp-xs">
                         {link.label}
                       </span>
                     ) : (
