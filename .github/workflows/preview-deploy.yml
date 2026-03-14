@@ -1,3 +1,8 @@
+# Preview deployment workflow for branch-based previews.
+#
+# Triggered on pushes to `preview` or `expreview/*` branches.
+# Builds the site, deploys to Cloudflare Pages, and sets a commit status.
+
 name: Preview Deploy
 
 on:
@@ -19,27 +24,31 @@ jobs:
     uses: ./.github/workflows/detect-runner.yml
     secrets: inherit
 
+  # ─── Build and Deploy ─────────────────────────────────────────────────
+
   build-and-deploy:
     name: Build and Deploy Preview
     needs: detect-runner
     runs-on: ${{ needs.detect-runner.outputs.runner }}
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          version: 10
-      - uses: actions/setup-node@v4
+          dest: ~/setup-pnpm-${{ github.job }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: 22
           cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Build
-        run: pnpm run build
+        run: pnpm build
       - name: Determine branch name
         id: branch
         env:
@@ -50,23 +59,24 @@ jobs:
       - name: Prepare deploy directory
         run: |
           mkdir -p deploy/pj/zcss
-          cp -r dist/* deploy/pj/zcss/
+          cp -r dist/. deploy/pj/zcss/
+          echo '/ /pj/zcss/ 302' > deploy/_redirects
       - name: Deploy to Cloudflare Pages
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           DEPLOY_BRANCH: ${{ steps.branch.outputs.name }}
         run: |
-          pnpm dlx wrangler pages deploy deploy \
+          pnpm dlx wrangler@4 pages deploy deploy \
             --project-name=zudo-css \
             --branch="$DEPLOY_BRANCH" \
-            --commit-hash=${GITHUB_SHA} \
+            --commit-hash="${GITHUB_SHA}" \
             --commit-message="Preview: ${DEPLOY_BRANCH} @ ${GITHUB_SHA::7}"
 
           echo "Preview URL: https://${DEPLOY_BRANCH}.zudo-css.pages.dev/pj/zcss/"
       - name: Set commit status
         if: always()
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const branch = '${{ steps.branch.outputs.name }}';
