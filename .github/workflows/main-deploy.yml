@@ -23,16 +23,11 @@ permissions:
   contents: read
 
 jobs:
-  detect-runner:
-    uses: ./.github/workflows/detect-runner.yml
-    secrets: inherit
-
   # ─── Build ────────────────────────────────────────────────────────────
 
   build:
     name: Build
-    needs: detect-runner
-    runs-on: ${{ needs.detect-runner.outputs.runner }}
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - name: Checkout repository
@@ -41,8 +36,6 @@ jobs:
           fetch-depth: 0
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          dest: ~/setup-pnpm-${{ github.job }}
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
@@ -63,8 +56,8 @@ jobs:
 
   deploy:
     name: Deploy to Cloudflare Pages
-    needs: [detect-runner, build]
-    runs-on: ${{ needs.detect-runner.outputs.runner }}
+    needs: build
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Download build artifact
@@ -92,9 +85,9 @@ jobs:
 
   notify:
     name: Deploy Notification
-    needs: [detect-runner, build, deploy]
+    needs: [build, deploy]
     if: always()
-    runs-on: ${{ needs.detect-runner.outputs.runner }}
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Notify via IFTTT

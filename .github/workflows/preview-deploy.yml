@@ -20,16 +20,11 @@ permissions:
   statuses: write
 
 jobs:
-  detect-runner:
-    uses: ./.github/workflows/detect-runner.yml
-    secrets: inherit
-
   # ─── Build and Deploy ─────────────────────────────────────────────────
 
   build-and-deploy:
     name: Build and Deploy Preview
-    needs: detect-runner
-    runs-on: ${{ needs.detect-runner.outputs.runner }}
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - name: Checkout repository
@@ -38,8 +33,6 @@ jobs:
           fetch-depth: 0
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          dest: ~/setup-pnpm-${{ github.job }}
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
