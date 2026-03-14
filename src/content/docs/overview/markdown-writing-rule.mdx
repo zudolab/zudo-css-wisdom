@@ -250,7 +250,19 @@ Use `---` only for major topic shifts (e.g., separating appendix content from th
 
 ## Admonitions
 
-Use admonitions sparingly. Available components (no imports needed):
+Use admonitions sparingly. Two syntaxes are supported (no imports needed):
+
+**Directive syntax** (preferred for readability):
+
+```markdown
+:::note[Optional Title]
+
+Supplementary information related to the main content.
+
+:::
+```
+
+**JSX component syntax**:
 
 ```mdx
 <Note title="Optional Title">
@@ -260,12 +272,4 @@ Supplementary information related to the main content.
 </Note>
 ```
 
-```mdx
-<Info>
-
-Tangential but relevant context. "By the way" content.
-
-</Info>
-```
-
-Other available types: `<Tip>`, `<Warning>`, `<Danger>`. Use `<Note>` and `<Info>` for most cases.
+Available types: `note`, `tip`, `info`, `warning`, `danger`. Use `note` and `info` for most cases.
