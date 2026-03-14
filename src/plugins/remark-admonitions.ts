@@ -1,5 +1,5 @@
 import type { Root } from "mdast";
-import { visit } from "unist-util-visit";
+import { visit, SKIP } from "unist-util-visit";
 
 /**
  * Remark plugin that transforms container directives (`:::note`, `:::info`,
@@ -24,6 +24,15 @@ function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+/** Recursively extract plain text from an mdast node tree. */
+function extractText(node: any): string {
+  if (typeof node.value === "string") return node.value;
+  if (Array.isArray(node.children)) {
+    return node.children.map(extractText).join("");
+  }
+  return "";
+}
+
 export function remarkAdmonitions() {
   return (tree: Root) => {
     visit(tree, (node: any) => {
@@ -35,10 +44,8 @@ export function remarkAdmonitions() {
 
         // Extract title from the directive label
         const label = node.children?.[0];
-        const title =
-          label?.data?.directiveLabel === true
-            ? (label.children?.map((c: any) => c.value).join("") ?? "")
-            : "";
+        const isLabel = label?.data?.directiveLabel === true;
+        const title = isLabel ? extractText(label) : "";
 
         // Build JSX attributes
         const attributes: any[] = [];
@@ -54,11 +61,14 @@ export function remarkAdmonitions() {
         node.type = "mdxJsxFlowElement";
         node.name = componentName;
         node.attributes = attributes;
+        delete node.data;
 
-        // Remove the label paragraph from children if it was consumed as title
-        if (title && label?.data?.directiveLabel === true) {
+        // Remove the label paragraph from children if consumed as title
+        if (isLabel) {
           node.children = node.children.slice(1);
         }
+
+        return SKIP;
       }
     });
   };
