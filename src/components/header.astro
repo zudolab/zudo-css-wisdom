@@ -6,15 +6,15 @@ import ThemeToggle from "@/components/theme-toggle";
 import LanguageSwitcher from "@/components/language-switcher.astro";
 import Search from "@/components/search.astro";
 import { settings } from "@/config/settings";
-import { withBase, stripBase } from "@/utils/base";
-import { defaultLocale, locales, t, type Locale } from "@/config/i18n";
+import { withBase, stripBase, getPathForLocale } from "@/utils/base";
+import { defaultLocale, locales, getLocaleLabel, t, type Locale } from "@/config/i18n";
 
 interface Props {
   lang?: Locale;
   currentPath?: string;
 }
 
-const { lang, currentPath = "" } = Astro.props;
+const { lang, currentPath = Astro.url.pathname } = Astro.props;
 const isNonDefaultLocale = lang != null && lang !== defaultLocale;
 const pathWithoutBase = stripBase(currentPath);
 const pathForMatch = isNonDefaultLocale ? pathWithoutBase.replace(new RegExp(`^/${lang}`), "") : pathWithoutBase;
@@ -29,12 +29,30 @@ const navItems = settings.headerNav.map((item) => ({
   href: withBase(isNonDefaultLocale ? `/${lang}${item.path}` : item.path),
   isActive: item.path === activeNavPath,
 }));
+
+// Prepare locale links for the mobile sidebar
+const localeLinks = lang && locales.length > 1
+  ? locales.map((code) => ({
+      code,
+      label: getLocaleLabel(code),
+      href: getPathForLocale(currentPath, lang, code),
+      isCurrent: code === lang,
+    }))
+  : undefined;
+
+const themeConfig = settings.colorMode
+  ? { defaultMode: settings.colorMode.defaultMode }
+  : undefined;
 ---
 
 <header
   class="sticky top-0 z-50 flex h-[3.5rem] items-center border-b border-muted bg-surface px-hsp-lg"
 >
-  <SidebarToggle client:media="(max-width: 1023px)">
+  <SidebarToggle
+    client:media="(max-width: 1023px)"
+    themeConfig={themeConfig}
+    localeLinks={localeLinks}
+  >
     <slot name="sidebar" />
   </SidebarToggle>
 
@@ -47,10 +65,16 @@ const navItems = settings.headerNav.map((item) => ({
   <div class="ml-auto flex shrink-0 items-center gap-x-hsp-md">
     <Search />
     {settings.colorMode ? (
-      <ThemeToggle defaultMode={settings.colorMode.defaultMode} client:load />
+      <span class="hidden lg:block">
+        <ThemeToggle defaultMode={settings.colorMode.defaultMode} client:load />
+      </span>
     ) : (
       <ColorSchemePicker client:load />
     )}
-    {lang && locales.length > 1 && <LanguageSwitcher lang={lang} />}
+    {lang && locales.length > 1 && (
+      <span class="hidden lg:block">
+        <LanguageSwitcher lang={lang} />
+      </span>
+    )}
   </div>
 </header>

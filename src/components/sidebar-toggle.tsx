@@ -1,10 +1,24 @@
 import { useState, useEffect } from "react";
+import ThemeToggle from "./theme-toggle";
+
+interface LocaleLink {
+  code: string;
+  label: string;
+  href: string;
+  isCurrent: boolean;
+}
 
 interface SidebarToggleProps {
   children: React.ReactNode;
+  themeConfig?: { defaultMode: "light" | "dark" };
+  localeLinks?: LocaleLink[];
 }
 
-export default function SidebarToggle({ children }: SidebarToggleProps) {
+export default function SidebarToggle({
+  children,
+  themeConfig,
+  localeLinks,
+}: SidebarToggleProps) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -36,6 +50,8 @@ export default function SidebarToggle({ children }: SidebarToggleProps) {
     document.addEventListener("astro:after-swap", handleSwap);
     return () => document.removeEventListener("astro:after-swap", handleSwap);
   }, []);
+
+  const hasExtras = themeConfig || (localeLinks && localeLinks.length > 1);
 
   return (
     <>
@@ -93,13 +109,43 @@ export default function SidebarToggle({ children }: SidebarToggleProps) {
       {/* Sidebar panel - mobile only (desktop sidebar is in doc-layout) */}
       <aside
         className={`
-          fixed top-[3.5rem] left-0 z-40 h-[calc(100vh-3.5rem)] w-[16rem] overflow-y-auto
+          fixed top-[3.5rem] left-0 z-40 h-[calc(100vh-3.5rem)] w-[16rem]
+          flex flex-col
           border-r border-muted bg-bg transition-transform duration-200
           lg:hidden
           ${open ? "translate-x-0" : "-translate-x-full"}
         `}
       >
-        {children}
+        <div className="flex-1 overflow-y-auto">{children}</div>
+        {hasExtras && (
+          <div className="shrink-0 border-t border-muted px-hsp-md py-vsp-sm flex items-center gap-x-hsp-md">
+            {themeConfig && (
+              <ThemeToggle defaultMode={themeConfig.defaultMode} />
+            )}
+            {localeLinks && localeLinks.length > 1 && (
+              <div className="flex items-center gap-x-hsp-xs text-small">
+                {localeLinks.map((link, i) => (
+                  <span key={link.code}>
+                    {i > 0 && <span className="text-muted">/</span>}
+                    {link.isCurrent ? (
+                      <span aria-current="true" className="font-medium text-fg ml-hsp-xs">
+                        {link.label}
+                      </span>
+                    ) : (
+                      <a
+                        href={link.href}
+                        lang={link.code}
+                        className="text-muted hover:text-fg ml-hsp-xs"
+                      >
+                        {link.label}
+                      </a>
+                    )}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </aside>
     </>
   );

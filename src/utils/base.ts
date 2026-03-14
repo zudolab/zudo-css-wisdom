@@ -23,3 +23,22 @@ export function docsUrl(slug: string, lang: Locale = defaultLocale): string {
   const path = lang === defaultLocale ? `/docs/${slug}` : `/${lang}/docs/${slug}`;
   return withBase(path);
 }
+
+/** Rewrite a page URL from one locale to another. */
+export function getPathForLocale(
+  path: string,
+  currentLang: string,
+  targetLang: string,
+): string {
+  let relativePath = stripBase(path) || "/";
+  if (currentLang !== defaultLocale) {
+    relativePath = relativePath.replace(
+      new RegExp(`^/${currentLang}(/|$)`),
+      "/",
+    );
+  }
+  if (targetLang !== defaultLocale) {
+    relativePath = `/${targetLang}${relativePath}`;
+  }
+  return withBase(relativePath);
+}
