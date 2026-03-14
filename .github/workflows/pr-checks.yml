@@ -14,24 +14,17 @@ permissions:
   pull-requests: write
 
 jobs:
-  detect-runner:
-    uses: ./.github/workflows/detect-runner.yml
-    secrets: inherit
-
   # ─── Type Check ───────────────────────────────────────────────────────
 
   typecheck:
     name: Type Check
-    needs: detect-runner
-    runs-on: ${{ needs.detect-runner.outputs.runner }}
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          dest: ~/setup-pnpm-${{ github.job }}
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
@@ -46,8 +39,7 @@ jobs:
 
   build:
     name: Build
-    needs: detect-runner
-    runs-on: ${{ needs.detect-runner.outputs.runner }}
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - name: Checkout repository
@@ -56,8 +48,6 @@ jobs:
           fetch-depth: 0
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          dest: ~/setup-pnpm-${{ github.job }}
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
@@ -78,8 +68,8 @@ jobs:
 
   preview:
     name: Preview Deploy
-    needs: [detect-runner, build]
-    runs-on: ${{ needs.detect-runner.outputs.runner }}
+    needs: build
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Download build artifact
@@ -96,7 +86,7 @@ jobs:
         id: cf-deploy
         run: |
           PR_NUMBER="${{ github.event.pull_request.number }}"
-          pnpm dlx wrangler@4 pages deploy deploy \
+          npx wrangler@4 pages deploy deploy \
             --project-name=zudo-css \
             --branch="pr-${PR_NUMBER}" \
             --commit-hash="${GITHUB_SHA}" \
