@@ -72,7 +72,7 @@ jobs:
           echo '/ /pj/zcss/ 302' > deploy/_redirects
       - name: Deploy to Cloudflare Pages (production)
         run: |
-          pnpm dlx wrangler@4 pages deploy deploy \
+          npx wrangler@4 pages deploy deploy \
             --project-name=zudo-css \
             --branch=main \
             --commit-hash="${GITHUB_SHA}" \

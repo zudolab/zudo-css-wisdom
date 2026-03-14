@@ -86,7 +86,7 @@ jobs:
         id: cf-deploy
         run: |
           PR_NUMBER="${{ github.event.pull_request.number }}"
-          pnpm dlx wrangler@4 pages deploy deploy \
+          npx wrangler@4 pages deploy deploy \
             --project-name=zudo-css \
             --branch="pr-${PR_NUMBER}" \
             --commit-hash="${GITHUB_SHA}" \
