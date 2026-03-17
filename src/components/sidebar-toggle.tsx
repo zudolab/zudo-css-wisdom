@@ -28,6 +28,17 @@ export default function SidebarToggle({ children, bottomContent }: SidebarToggle
     return () => document.removeEventListener("astro:after-swap", handleSwap);
   }, []);
 
+  // Close on Escape key
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape" && open) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [open]);
+
   return (
     <>
       {/* Hamburger button - visible only on mobile */}
@@ -36,6 +47,7 @@ export default function SidebarToggle({ children, bottomContent }: SidebarToggle
         onClick={() => setOpen(!open)}
         className="lg:hidden px-hsp-sm py-vsp-xs -ml-hsp-sm mr-hsp-sm text-muted hover:text-fg"
         aria-label={open ? "Close sidebar" : "Open sidebar"}
+        aria-expanded={open}
       >
         {open ? (
           <svg
@@ -76,6 +88,7 @@ export default function SidebarToggle({ children, bottomContent }: SidebarToggle
           className="fixed inset-0 z-30 lg:hidden"
           style={{ backgroundColor: "rgba(0, 0, 0, 0.3)" }}
           onClick={() => setOpen(false)}
+          aria-hidden="true"
         />
       )}
 

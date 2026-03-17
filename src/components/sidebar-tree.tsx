@@ -407,6 +407,7 @@ function LeafNode({
         <ConnectorLines depth={depth} isLast={isLast} />
         <a
           href={node.href}
+          aria-current={isActive ? "page" : undefined}
           className={isRoot
             ? `flex items-center gap-hsp-xs py-[calc(var(--spacing-vsp-xs)+0.15rem)] pr-[4px] text-small font-semibold ${
                 isActive ? "bg-fg text-bg" : "text-fg hover:underline focus:underline"
