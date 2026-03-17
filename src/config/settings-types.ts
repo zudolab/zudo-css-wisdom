@@ -17,6 +17,7 @@ export interface LocaleConfig {
   dir: string;
 }
 
+<<<<<<< HEAD
 export interface FooterLinkItem {
   label: string;
   href: string;
@@ -30,10 +31,26 @@ export interface FooterLinkColumn {
 export interface FooterConfig {
   links: FooterLinkColumn[];
   /** Copyright text displayed at the bottom of the footer. HTML is supported. */
+=======
+export interface VersionConfig {
+  slug: string;
+  label: string;
+  docsDir: string;
+  banner?: "unmaintained" | "unreleased";
+  locales?: Record<string, LocaleConfig>;
+}
+
+export interface FooterConfig {
+  links: Array<{
+    title: string;
+    items: Array<{ label: string; href: string }>;
+  }>;
+>>>>>>> update-zudo-doc-base/config-content
   copyright?: string;
 }
 
 export interface HtmlPreviewConfig {
+<<<<<<< HEAD
   /** Raw HTML injected into <head> (links, meta, fonts) */
   head?: string;
   /** CSS injected as <style> after preflight */
@@ -54,3 +71,9 @@ export interface VersionConfig {
   /** Banner text shown on versioned pages (e.g., "unmaintained", "unreleased") */
   banner?: "unmaintained" | "unreleased" | false;
 }
+=======
+  head?: string;
+  css?: string;
+  js?: string;
+}
+>>>>>>> update-zudo-doc-base/config-content
