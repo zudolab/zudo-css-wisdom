@@ -2,11 +2,17 @@ export type {
   HeaderNavItem,
   ColorModeConfig,
   LocaleConfig,
+  VersionConfig,
+  FooterConfig,
+  HtmlPreviewConfig,
 } from "./settings-types";
 import type {
   HeaderNavItem,
   ColorModeConfig,
   LocaleConfig,
+  VersionConfig,
+  FooterConfig,
+  HtmlPreviewConfig,
 } from "./settings-types";
 
 export const settings = {
@@ -33,6 +39,13 @@ export const settings = {
   docTags: false,
   math: false,
   docHistory: true,
+  trailingSlash: false,
+  aiAssistant: false,
+  colorTweakPanel: false,
+  llmsTxt: false,
+  versions: false as VersionConfig[] | false,
+  footer: false as FooterConfig | false,
+  htmlPreview: undefined as HtmlPreviewConfig | undefined,
   claudeResources: false as { claudeDir: string; projectRoot?: string } | false,
   headerNav: [
     { label: "Overview", path: "/docs/overview", categoryMatch: "overview" },

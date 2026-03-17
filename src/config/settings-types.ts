@@ -16,3 +16,25 @@ export interface LocaleConfig {
   label: string;
   dir: string;
 }
+
+export interface VersionConfig {
+  slug: string;
+  label: string;
+  docsDir: string;
+  banner?: "unmaintained" | "unreleased";
+  locales?: Record<string, LocaleConfig>;
+}
+
+export interface FooterConfig {
+  links: Array<{
+    title: string;
+    items: Array<{ label: string; href: string }>;
+  }>;
+  copyright?: string;
+}
+
+export interface HtmlPreviewConfig {
+  head?: string;
+  css?: string;
+  js?: string;
+}
