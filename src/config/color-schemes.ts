@@ -1,29 +1,41 @@
+/** A color reference: palette index (number) or direct color value (string) */
+export type ColorRef = number | string;
+
 export interface ColorScheme {
-  background: string;
-  foreground: string;
-  cursor: string;
-  selectionBg: string;
-  selectionFg: string;
+  background: ColorRef;
+  foreground: ColorRef;
+  cursor: ColorRef;
+  selectionBg: ColorRef;
+  selectionFg: ColorRef;
   palette: [
     string, string, string, string, string, string, string, string,
     string, string, string, string, string, string, string, string,
   ];
   shikiTheme: NonNullable<import("astro").ShikiConfig["theme"]>;
   /** Optional semantic overrides — when omitted, defaults are used:
-   *  surface=palette[0], muted=palette[8], accent=palette[6], accentHover=palette[14]
-   *  codeBg=foreground, codeFg=background, success=palette[2], danger=palette[1],
-   *  warning=palette[3], info=palette[4] */
+   *  surface=p0, muted=p8, accent=p5, accentHover=p14
+   *  codeBg=p10, codeFg=p11, success=p2, danger=p1, warning=p3, info=p4
+   *  Each field accepts a palette index (number) or a direct color value (string). */
   semantic?: {
-    surface?: string;
-    muted?: string;
-    accent?: string;
-    accentHover?: string;
-    codeBg?: string;
-    codeFg?: string;
-    success?: string;
-    danger?: string;
-    warning?: string;
-    info?: string;
+    surface?: ColorRef;
+    muted?: ColorRef;
+    accent?: ColorRef;
+    accentHover?: ColorRef;
+    codeBg?: ColorRef;
+    codeFg?: ColorRef;
+    success?: ColorRef;
+    danger?: ColorRef;
+    warning?: ColorRef;
+    info?: ColorRef;
+    mermaidNodeBg?: ColorRef;
+    mermaidText?: ColorRef;
+    mermaidLine?: ColorRef;
+    mermaidLabelBg?: ColorRef;
+    mermaidNoteBg?: ColorRef;
+    chatUserBg?: ColorRef;
+    chatUserText?: ColorRef;
+    chatAssistantBg?: ColorRef;
+    chatAssistantText?: ColorRef;
   };
 }
 
