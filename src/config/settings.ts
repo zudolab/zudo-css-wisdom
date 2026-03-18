@@ -44,7 +44,19 @@ export const settings = {
   llmsTxt: false,
   colorTweakPanel: false,
   versions: false as VersionConfig[] | false,
-  footer: false as FooterConfig | false,
+  footer: {
+    links: [
+      {
+        title: "Fundamentals",
+        items: [
+          { label: "Tight Token Strategy", href: "/docs/methodology/tight-token-strategy" },
+          { label: "Component First Strategy", href: "/docs/methodology/component-first-css" },
+          { label: "Three-Tier Color Strategy", href: "/docs/color/three-tier-color-strategy" },
+        ],
+      },
+    ],
+    copyright: `Copyright © ${new Date().getFullYear()} <a href="https://x.com/Takazudo">Takazudo</a>. Built with <a href="https://takazudomodular.com/pj/zudo-doc">zudo-doc</a>.`,
+  } satisfies FooterConfig as FooterConfig | false,
   htmlPreview: false as HtmlPreviewConfig | false,
   claudeResources: false as { claudeDir: string; projectRoot?: string } | false,
   headerNav: [
