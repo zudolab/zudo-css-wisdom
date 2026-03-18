@@ -24,7 +24,7 @@ export const settings = {
     respectPrefersColorScheme: true,
   } as ColorModeConfig | false,
   siteName: "zudo-css",
-  siteDescription: "CSS best practices — practical techniques for modern web development" as string,
+  siteDescription: "Pragmatic CSS knowledge for AI" as string,
   base: "/pj/zcss/",
   docsDir: "src/content/docs",
   locales: {
@@ -73,13 +73,13 @@ export const settings = {
   htmlPreview: false as HtmlPreviewConfig | false,
   claudeResources: { claudeDir: ".claude" } as { claudeDir: string; projectRoot?: string } | false,
   headerNav: [
+    { label: "Methodology", path: "/docs/methodology", categoryMatch: "methodology" },
     { label: "Layout", path: "/docs/layout", categoryMatch: "layout" },
     { label: "Typography", path: "/docs/typography", categoryMatch: "typography" },
     { label: "Visual", path: "/docs/visual", categoryMatch: "visual" },
     { label: "Color", path: "/docs/color", categoryMatch: "color" },
     { label: "Responsive", path: "/docs/responsive", categoryMatch: "responsive" },
     { label: "Interactive", path: "/docs/interactive", categoryMatch: "interactive" },
-    { label: "Methodology", path: "/docs/methodology", categoryMatch: "methodology" },
     { label: "Claude", path: "/docs/claude", categoryMatch: "claude" },
   ] as HeaderNavItem[],
 };
