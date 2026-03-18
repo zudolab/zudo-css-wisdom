@@ -64,6 +64,33 @@ jobs:
           path: dist/
           retention-days: 1
 
+  # ─── Link Check ──────────────────────────────────────────────────────
+
+  link-check:
+    name: Link Check
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Download build artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: dist-out
+          path: dist/
+      - name: Check links
+        run: pnpm run check:links
+
   # ─── Preview Deploy ───────────────────────────────────────────────────
 
   preview:

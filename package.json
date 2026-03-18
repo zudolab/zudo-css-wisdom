@@ -13,6 +13,8 @@
     "preview": "astro preview --port 8811",
     "// ── Quality ──────────────────────────────────────": "",
     "check": "astro sync && tsc --noEmit",
+    "check:links": "node scripts/check-links.js --strict",
+    "b4push": "bash scripts/run-b4push.sh",
     "// ── Tools ──────────────────────────────────────": "",
     "generate:css-wisdom": "node scripts/generate-css-wisdom.js",
     "setup:symlink": "node scripts/generate-css-wisdom.js && mkdir -p ~/.claude/skills && ln -sfn \"$(pwd)/.claude/skills/css-wisdom\" ~/.claude/skills/css-wisdom && echo 'Symlinked'"
