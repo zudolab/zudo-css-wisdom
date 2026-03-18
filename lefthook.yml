@@ -7,3 +7,13 @@ pre-commit:
     format-astro:
       glob: "*.astro"
       run: pnpm exec prettier --write {staged_files} && git add {staged_files}
+
+pre-push:
+  commands:
+    check-main:
+      run: |
+        current_branch=$(git symbolic-ref --short HEAD 2>/dev/null)
+        if [ "$current_branch" = "main" ]; then
+          echo "Running quality checks before pushing to main..."
+          pnpm check
+        fi

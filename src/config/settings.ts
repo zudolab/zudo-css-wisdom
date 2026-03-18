@@ -41,7 +41,7 @@ export const settings = {
   docTags: false,
   docHistory: true,
   aiAssistant: false,
-  llmsTxt: false,
+  llmsTxt: true,
   colorTweakPanel: false,
   versions: false as VersionConfig[] | false,
   footer: {
@@ -81,5 +81,6 @@ export const settings = {
     { label: "Responsive", path: "/docs/responsive", categoryMatch: "responsive" },
     { label: "Interactive", path: "/docs/interactive", categoryMatch: "interactive" },
     { label: "Methodology", path: "/docs/methodology", categoryMatch: "methodology" },
+    { label: "Misc", path: "/docs/misc", categoryMatch: "misc" },
   ] as HeaderNavItem[],
 };

@@ -16,7 +16,7 @@ src/integrations/       # Astro integrations (search, doc-history, sitemap)
 src/styles/             # Global CSS (Tailwind v4 + design tokens)
 src/utils/              # Utility functions
 public/                 # Static assets
-.husky/                 # Git hooks (pre-commit: lint-staged)
+lefthook.yml            # Git hooks (pre-commit: format, pre-push: quality checks)
 .claude/skills/         # Claude Code skills managed in this repo
 ```
 
