@@ -35,7 +35,7 @@ export const settings = {
   math: false,
   noindex: false as boolean,
   editUrl: false as string | false,
-  siteUrl: "" as string,
+  siteUrl: "https://takazudomodular.com/pj/zcss/" as string,
   sitemap: true,
   docMetainfo: true,
   docTags: false,

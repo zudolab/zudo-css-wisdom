@@ -44,6 +44,7 @@ const shikiConfig = settings.colorMode
     };
 
 export default defineConfig({
+  site: "https://takazudomodular.com",
   output: "static",
   trailingSlash: settings.trailingSlash ? "always" : "never",
   base: settings.base,
