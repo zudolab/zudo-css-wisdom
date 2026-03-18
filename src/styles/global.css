@@ -197,7 +197,7 @@ body {
 
 .zd-content :where(h2) {
   font-size: var(--text-subheading);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-normal);
   line-height: var(--leading-tight);
   margin-top: var(--spacing-vsp-2xl);
   margin-bottom: var(--spacing-vsp-xs);
@@ -208,7 +208,7 @@ body {
 
 .zd-content :where(h3) {
   font-size: var(--text-body);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-normal);
   line-height: var(--leading-snug);
   margin-top: var(--spacing-vsp-xl);
   margin-bottom: var(--spacing-vsp-xs);
@@ -219,7 +219,7 @@ body {
 
 .zd-content :where(h4) {
   font-size: var(--text-body);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-normal);
   line-height: var(--leading-snug);
   margin-top: var(--spacing-vsp-lg);
   margin-bottom: var(--spacing-vsp-xs);
@@ -230,7 +230,7 @@ body {
 
 .zd-content :where(h5, h6) {
   font-size: var(--text-small);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-normal);
   line-height: var(--leading-snug);
   margin-top: var(--spacing-vsp-md);
   margin-bottom: var(--spacing-vsp-2xs);

@@ -25,7 +25,7 @@ const sortedTags = [...tagMap.values()].sort((a, b) =>
       { label: t("doc.allTags") },
     ]}
   />
-  <h1 class="text-heading font-bold mb-vsp-lg">{t("doc.allTags")}</h1>
+  <h1 class="text-heading font-normal mb-vsp-lg">{t("doc.allTags")}</h1>
   {
     sortedTags.length === 0 ? (
       <p class="text-muted">{t("doc.noTags")}</p>
