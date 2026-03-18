@@ -98,14 +98,40 @@ interface RootMenuItem {
   href: string;
 }
 
+interface LocaleLink {
+  label: string;
+  href: string;
+  active: boolean;
+}
+
 interface SidebarTreeProps {
   nodes: NavNode[];
   currentSlug?: string;
   rootMenuItems?: RootMenuItem[];
   backToMenuLabel?: string;
+  localeLinks?: LocaleLink[];
 }
 
-export default function SidebarTree({ nodes, currentSlug, rootMenuItems, backToMenuLabel }: SidebarTreeProps) {
+function LocaleSwitcher({ links }: { links: LocaleLink[] }) {
+  return (
+    <div className="flex items-center gap-hsp-xs border-t border-muted px-hsp-sm py-vsp-xs text-small">
+      {links.map((link, i) => (
+        <span key={link.href} className="flex items-center gap-hsp-xs">
+          {i > 0 && <span className="text-muted">/</span>}
+          {link.active ? (
+            <span className="font-medium text-fg">{link.label}</span>
+          ) : (
+            <a href={link.href} className="text-muted hover:text-fg">
+              {link.label}
+            </a>
+          )}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+export default function SidebarTree({ nodes, currentSlug, rootMenuItems, backToMenuLabel, localeLinks }: SidebarTreeProps) {
   const activeSlug = useActiveSlug(nodes, currentSlug);
   const [query, setQuery] = useState("");
   const [showingRootMenu, setShowingRootMenu] = useState(false);
@@ -155,6 +181,7 @@ export default function SidebarTree({ nodes, currentSlug, rootMenuItems, backToM
             {item.label}
           </a>
         ))}
+        {localeLinks && <LocaleSwitcher links={localeLinks} />}
       </nav>
     );
   }
@@ -183,6 +210,7 @@ export default function SidebarTree({ nodes, currentSlug, rootMenuItems, backToM
             {item.label}
           </a>
         ))}
+        {localeLinks && <LocaleSwitcher links={localeLinks} />}
       </nav>
     );
   }
@@ -222,6 +250,7 @@ export default function SidebarTree({ nodes, currentSlug, rootMenuItems, backToM
         depth={0}
         forceOpen={!!query}
       />
+      {localeLinks && <LocaleSwitcher links={localeLinks} />}
     </nav>
   );
 }
