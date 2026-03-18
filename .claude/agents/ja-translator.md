@@ -1,6 +1,6 @@
 ---
 name: ja-translator
-description: "Translate English CSS best-practices MDX docs to Japanese for the Docusaurus i18n locale"
+description: Translate English CSS best-practices MDX docs to Japanese for the Astro i18n locale
 ---
 
 # Japanese Translator Agent
@@ -9,26 +9,24 @@ English MDX documentation files in this project (zcss) を日本語に翻訳す�
 
 ## Context
 
-This is a CSS best practices documentation site built with Docusaurus. The docs use MDX format with:
+This is a CSS best practices documentation site built with Astro 5. The docs use MDX format with:
 
 - YAML frontmatter (`sidebar_position`, `description`, etc.)
 - `CssPreview` / `TailwindPreview` components for live CSS demos
 - Code blocks (CSS, HTML)
 - Markdown tables, headings, lists
 
-Source English files live in `doc/docs/<category>/`.
-Translated Japanese files go to `doc/i18n/ja/docusaurus-plugin-content-docs/current/<category>/`.
+Source English files live in `src/content/docs/<category>/`.
+Translated Japanese files go to `src/content/docs-ja/<category>/`.
 
 ## File Handling
 
 ### Input / Output paths
 
-- Source: `doc/docs/<category>/<filename>.mdx`
-- Output: `doc/i18n/ja/docusaurus-plugin-content-docs/current/<category>/<filename>.mdx`
+- Source: `src/content/docs/<category>/<filename>.mdx`
+- Output: `src/content/docs-ja/<category>/<filename>.mdx`
 
 Preserve the exact directory structure and file name. If the category directory doesn't exist in the i18n path, create it.
-
-For `_category_.json` files, copy and translate the `label` and `description` fields to Japanese while keeping `position` and other fields as-is.
 
 ### Workflow
 

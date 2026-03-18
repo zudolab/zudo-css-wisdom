@@ -2,7 +2,7 @@
 name: l-handle-deep-article
 description: >-
   Create or convert CSS best-practices articles into "deep articles" with sub-pages in the zcss
-  Docusaurus site. Use when: (1) An article topic has enough depth to warrant "see more" reference
+  Astro site. Use when: (1) An article topic has enough depth to warrant "see more" reference
   sub-pages, (2) Converting a flat .mdx article into a category with index + child pages, (3) Adding
   deep reference content to an existing article, (4) User says 'deep article', 'add sub-pages',
   'expand article', or 'add reference pages'.
@@ -30,27 +30,14 @@ Do **not** use for topics that fit in a single page with 4-5 demos.
 ### 1. Create folder, move main article
 
 ```bash
-cd doc/docs/<category>/
+cd src/content/docs/<category>/
 mkdir my-topic
 mv my-topic.mdx my-topic/index.mdx
 ```
 
-### 2. Create `_category_.json`
+### 2. Update `index.mdx` frontmatter
 
-```json
-{
-  "label": "My Topic Title",
-  "position": <same sidebar_position as original>,
-  "link": {
-    "type": "doc",
-    "id": "<category>/my-topic/index"
-  }
-}
-```
-
-### 3. Update `index.mdx` frontmatter
-
-Remove `sidebar_position` (now in `_category_.json`). Add a "Deep Dive" section at bottom:
+Add a "Deep Dive" section at bottom:
 
 ```mdx
 ## Deep Dive
@@ -59,7 +46,7 @@ Remove `sidebar_position` (now in `_category_.json`). Add a "Deep Dive" section 
 - [Sub-page Title](./sub-page-2) - Brief description
 ```
 
-### 4. Create sub-pages
+### 3. Create sub-pages
 
 Each sub-page: standalone `.mdx` with `sidebar_position`, CssPreview demos, focused on one aspect.
 
@@ -68,7 +55,7 @@ Each sub-page: standalone `.mdx` with `sidebar_position`, CssPreview demos, focu
 sidebar_position: 1
 ---
 
-import CssPreview from '@site/src/components/CssPreview';
+import CssPreview from '@/components/CssPreview';
 
 # Sub-page Title
 
@@ -79,6 +66,6 @@ import CssPreview from '@site/src/components/CssPreview';
 
 - Main article keeps Problem/Solution/Demo structure
 - Sub-pages can be reference-oriented (tables, catalogs, recipes)
-- Follow all CSS/demo conventions from `doc/CLAUDE.md`
+- Follow all CSS/demo conventions from `CLAUDE.md`
 - File naming: kebab-case
 - After conversion, regenerate css-wisdom index: `pnpm run generate:css-wisdom`

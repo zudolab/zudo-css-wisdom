@@ -1,11 +1,11 @@
 ---
 name: l-translate
 description: >-
-  Translate English docs to Japanese for the Docusaurus i18n locale.
-  Use when: (1) User wants to translate en docs to ja, (2) User says 'translate',
-  'ja version', 'Japanese translation', (3) User wants to check for missing ja docs.
+  Translate English docs to Japanese for the Astro i18n locale. Use when: (1) User wants to
+  translate en docs to ja, (2) User says 'translate', 'ja version', 'Japanese translation', (3) User
+  wants to check for missing ja docs.
 user-invocable: true
-argument-hint: "<file-path-or-category> or 'check-missing'"
+argument-hint: <file-path-or-category> or 'check-missing'
 ---
 
 # Translate EN Docs to JA
@@ -23,12 +23,12 @@ Parse the argument to determine the mode:
 
 ## Path Convention
 
-- Source EN: `doc/docs/<category>/<filename>.mdx`
-- Target JA: `doc/i18n/ja/docusaurus-plugin-content-docs/current/<category>/<filename>.mdx`
+- Source EN: `src/content/docs/<category>/<filename>.mdx`
+- Target JA: `src/content/docs-ja/<category>/<filename>.mdx`
 
 For deep articles (folder with `index.mdx` + sub-pages):
-- Source EN: `doc/docs/<category>/<folder>/index.mdx`
-- Target JA: `doc/i18n/ja/docusaurus-plugin-content-docs/current/<category>/<folder>/index.mdx`
+- Source EN: `src/content/docs/<category>/<folder>/index.mdx`
+- Target JA: `src/content/docs-ja/<category>/<folder>/index.mdx`
 
 ## Mode A: Translate Specific Files
 
@@ -61,15 +61,11 @@ Task tool → subagent_type: "ja-translator"
 prompt: "Update the Japanese translation at <ja-path> based on changes in <en-path>. Read both files, identify what changed in the EN source, and update only the corresponding sections in the JA file."
 ```
 
-### Step 4: Handle `_category_.json`
+### Step 4: Validate
 
-If the translated file is in a category directory that doesn't have a `_category_.json` in the JA i18n path, check if one exists in the EN source and copy it with translated `label` and `description` fields.
+Run `pnpm build` to verify no broken links or MDX errors.
 
-### Step 5: Validate
-
-Run `pnpm build` from `doc/` to verify no broken links or MDX errors.
-
-### Step 6: Report
+### Step 5: Report
 
 List all translated files and their output paths.
 
@@ -77,11 +73,11 @@ List all translated files and their output paths.
 
 ### Step 1: Scan EN Docs
 
-List all `.mdx` files under `doc/docs/` (recursively).
+List all `.mdx` files under `src/content/docs/` (recursively).
 
 ### Step 2: Compare with JA Docs
 
-For each EN file, check if a corresponding file exists at `doc/i18n/ja/docusaurus-plugin-content-docs/current/`.
+For each EN file, check if a corresponding file exists at `src/content/docs-ja/`.
 
 ### Step 3: Report
 
@@ -105,12 +101,12 @@ Same as Mode A but for all untranslated files in a given category directory.
 ### Step 1: List EN Files in Category
 
 ```bash
-ls doc/docs/<category>/
+ls src/content/docs/<category>/
 ```
 
 ### Step 2: Filter to Missing
 
-Compare with `doc/i18n/ja/docusaurus-plugin-content-docs/current/<category>/` and identify files without JA counterparts.
+Compare with `src/content/docs-ja/<category>/` and identify files without JA counterparts.
 
 ### Step 3: Translate All Missing
 
