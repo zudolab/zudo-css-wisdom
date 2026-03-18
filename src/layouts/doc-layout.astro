@@ -130,12 +130,12 @@ const contentTransition = {
     )}
     <ClientRouter />
   </head>
-  <body class="min-h-screen antialiased flex flex-col">
+  <body class="min-h-screen antialiased">
     <Header lang={lang} currentPath={currentPath} currentVersion={currentVersion} currentSlug={currentSlug} versionAvailability={versionAvailability}>
       <Sidebar slot="sidebar" currentSlug={currentSlug} lang={lang} navSection={navSection} />
     </Header>
 
-    <div class="flex flex-1">
+    <div class="flex min-h-[calc(100vh-3.5rem-10rem)]">
       {/* Desktop sidebar */}
       {!hideSidebar && (
         <aside
