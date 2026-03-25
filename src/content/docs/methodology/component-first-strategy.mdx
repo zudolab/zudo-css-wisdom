@@ -350,16 +350,11 @@ These are **exceptions**, not the default. If you are working in React, Vue, Sve
 
 ## Component-Tier Variables Are Unnecessary
 
-In tiered design token strategies — such as three-tier color tokens or three-tier font-size tokens — the most concrete level is the **component tier**: CSS custom properties scoped to a specific component. For example, `--dialog-side-spacing`, `--card-shadow`, or `--nav-font-size`. These variables let a component encapsulate its own design decisions in its CSS file.
+In tiered design token strategies — such as a [three-tier color strategy](/docs/color/three-tier-color-strategy) or a [three-tier font-size strategy](/docs/typography/three-tier-font-size-strategy) — the most concrete level is the **component tier**: CSS custom properties scoped to a specific component. For example, `--dialog-side-spacing`, `--card-shadow`, or `--nav-font-size`. These variables let a component encapsulate its own design decisions in its CSS file.
 
-With the component-first approach, this tier does not exist. There is no separate CSS file per component where you would define scoped custom properties. Styling is expressed as utility classes directly in the component's markup, and the component framework itself (React, Vue, Svelte, Astro) provides the scoping boundary.
+With the component-first approach, this tier is unnecessary. There is no separate CSS file per component where you would define scoped custom properties. Styling is expressed as utility classes directly in the component's markup, and the component framework itself (React, Vue, Svelte, Astro) provides the scoping boundary.
 
-This means a Tailwind + component-first project operates with only two token tiers:
-
-1. **Global tier** — design tokens defined once for the entire project (colors, spacing scale, type scale)
-2. **Utility tier** — Tailwind classes that map to those global tokens, applied directly in component markup
-
-The component tier is absorbed by the component architecture. A `<Dialog>` component does not need a `--dialog-side-spacing` variable — it uses `px-6` or `px-8` directly. A `<Card>` does not need `--card-shadow` — it uses `shadow-md`. The component file is already the single source of truth for that component's styling decisions.
+A `<Dialog>` component does not need a `--dialog-side-spacing` variable — it uses `px-6` or `px-8` directly. A `<Card>` does not need `--card-shadow` — it uses `shadow-md`. The component file is already the single source of truth for that component's styling decisions. The higher tiers (palette, theme, scale) still exist as global design tokens — only the component tier is eliminated, because the component architecture itself handles scoping.
 
 In contrast, when styling with general CSS approaches (BEM, CSS Modules), component-tier variables remain valuable. Without a component framework providing scoping, CSS custom properties are one of the few mechanisms for encapsulating design decisions within a component's stylesheet.
 
