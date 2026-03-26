@@ -31,7 +31,7 @@ Tailwind CSS はデフォルトで13のフォントサイズステップ（`text
 
 `lg` のような抽象名ならこの問題を解決できます。20px テキストが必要な要素はすべて `text-lg` を使います。役割はトークン名ではなくコンテキストから決まります。
 
-これは [Three-Tier Color Strategy](../../../color/three-tier-color-strategy/) や [Three-Tier Font-Size Strategy](../../../typography/three-tier-font-size-strategy/) と同じ考え方です。コアレイヤーでは中立的で再利用可能な名前を使います。`heading` や `caption` のようなセマンティック名は**テーマレイヤー**に属します — CSS カスタムプロパティやコンポーネントレベルのトークンとして、コアサイズを参照する形で定義します：
+これは [Three-Tier Color Strategy](../../../../styling/color/three-tier-color-strategy/) や [Three-Tier Font-Size Strategy](../../../../typography/font-sizing/three-tier-font-size-strategy/) と同じ考え方です。コアレイヤーでは中立的で再利用可能な名前を使います。`heading` や `caption` のようなセマンティック名は**テーマレイヤー**に属します — CSS カスタムプロパティやコンポーネントレベルのトークンとして、コアサイズを参照する形で定義します：
 
 ```css
 /* Core layer (@theme) — abstract, reusable scale */
@@ -559,8 +559,8 @@ Tailwind CSS はデフォルトで13のフォントサイズステップ（`text
 
 ## 関連記事
 
-- [Three-Tier Font-Size Strategy](../../../typography/three-tier-font-size-strategy/) — これらのトークン選択の背景にある完全な概念的アーキテクチャ（スケール → テーマ → コンポーネント）
-- [Three-Tier Color Strategy](../../../color/three-tier-color-strategy/) — 同じ三層アーキテクチャをカラーに適用したもの
+- [Three-Tier Font-Size Strategy](../../../../typography/font-sizing/three-tier-font-size-strategy/) — これらのトークン選択の背景にある完全な概念的アーキテクチャ（スケール → テーマ → コンポーネント）
+- [Three-Tier Color Strategy](../../../../styling/color/three-tier-color-strategy/) — 同じ三層アーキテクチャをカラーに適用したもの
 - [Color Token Patterns](./color-tokens) — 同じタイトトークンアプローチを使ったセマンティックカラースケール
 
 ## 参考リンク
