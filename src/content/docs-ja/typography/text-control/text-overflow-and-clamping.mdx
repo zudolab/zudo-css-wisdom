@@ -1,22 +1,22 @@
 ---
-title: Text Overflow and Line Clamping
-sidebar_position: 3
+title: テキストオーバーフローとラインクランプ
+sidebar_position: 1
 ---
 
 import CssPreview from '@/components/CssPreview';
 import TailwindPreview from '@/components/TailwindPreview';
 
-## The Problem
+## 問題
 
-Truncating text to fit constrained UI areas — cards, list items, navigation — is a common requirement. AI agents often reach for JavaScript-based solutions or generate incomplete CSS that only handles single-line truncation. Multi-line clamping, in particular, requires specific property combinations that are easy to get wrong. The legacy `-webkit-line-clamp` approach has three required co-dependent properties, and omitting any one of them causes silent failure.
+カード、リスト項目、ナビゲーションなど、制約のあるUI領域にテキストを収めるために切り詰めるのはよくある要件です。AIエージェントはJavaScriptベースの解決策に頼ったり、1行の切り詰めしか処理できない不完全なCSSを生成したりしがちです。特に複数行のクランプは、正確なプロパティの組み合わせが必要で、間違えやすいものです。レガシーの`-webkit-line-clamp`アプローチには相互依存する3つの必須プロパティがあり、いずれか1つでも省略するとサイレントに失敗します。
 
-## The Solution
+## 解決方法
 
-CSS provides two main truncation patterns: single-line ellipsis using `text-overflow` and multi-line clamping using `-webkit-line-clamp` (with the standard `line-clamp` property arriving for broader adoption).
+CSSには2つの主要な切り詰めパターンがあります：`text-overflow`を使った1行の省略記号と、`-webkit-line-clamp`を使った複数行クランプ（標準の`line-clamp`プロパティもより広く採用されつつあります）です。
 
-## Code Examples
+## コード例
 
-### Single-Line Ellipsis
+### 1行の省略記号
 
 ```css
 .truncate {
@@ -26,11 +26,11 @@ CSS provides two main truncation patterns: single-line ellipsis using `text-over
 }
 ```
 
-All three properties are required:
+3つのプロパティすべてが必須です：
 
-- `white-space: nowrap` prevents line wrapping
-- `overflow: hidden` clips the overflowing content
-- `text-overflow: ellipsis` displays the `...` indicator
+- `white-space: nowrap` は行の折り返しを防ぐ
+- `overflow: hidden` はあふれたコンテンツをクリップする
+- `text-overflow: ellipsis` は`...`インジケーターを表示する
 
 ```html
 <p class="truncate">
@@ -38,7 +38,7 @@ All three properties are required:
 </p>
 ```
 
-### Multi-Line Clamping (Legacy Syntax)
+### 複数行クランプ（レガシー構文）
 
 ```css
 .line-clamp-3 {
@@ -49,7 +49,7 @@ All three properties are required:
 }
 ```
 
-All four properties are required for this pattern to work. This syntax, despite using `-webkit-` prefixes, is supported across all major browsers (Chrome, Firefox, Safari, Edge) and is a fully specified behavior.
+このパターンが動作するには4つのプロパティすべてが必須です。`-webkit-`プレフィックスが付いていますが、すべての主要ブラウザ（Chrome、Firefox、Safari、Edge）でサポートされており、完全に仕様化された動作です。
 
 ```html
 <div class="card">
@@ -63,7 +63,7 @@ All four properties are required for this pattern to work. This syntax, despite 
 ```
 
 <CssPreview client:load
-  title="Text Overflow — Single-line Ellipsis and Multi-line Clamping"
+  title="テキストオーバーフロー — 1行の省略記号と複数行クランプ"
   html={`    <div class="overflow-demo">
       <div class="demo-card">
         <h3>Single-line Ellipsis</h3>
@@ -120,9 +120,9 @@ All four properties are required for this pattern to work. This syntax, despite 
     }`}
   height={260} />
 
-### Modern `line-clamp` Property
+### モダンな`line-clamp`プロパティ
 
-The standard `line-clamp` property simplifies the syntax. As of 2025, Chromium-based browsers support this.
+標準の`line-clamp`プロパティは構文を簡素化します。2025年時点では、Chromiumベースのブラウザがこれをサポートしています。
 
 ```css
 .line-clamp-modern {
@@ -131,9 +131,9 @@ The standard `line-clamp` property simplifies the syntax. As of 2025, Chromium-b
 }
 ```
 
-### Cross-Browser Safe Pattern
+### クロスブラウザ対応パターン
 
-For maximum compatibility, combine both approaches:
+最大限の互換性のために、両方のアプローチを組み合わせましょう：
 
 ```css
 .line-clamp {
@@ -145,7 +145,7 @@ For maximum compatibility, combine both approaches:
 }
 ```
 
-### Practical Card Component
+### 実用的なカードコンポーネント
 
 ```css
 .card {
@@ -177,7 +177,7 @@ For maximum compatibility, combine both approaches:
 </article>
 ```
 
-### Expandable Clamped Text
+### 展開可能なクランプテキスト
 
 ```css
 .expandable {
@@ -192,7 +192,7 @@ For maximum compatibility, combine both approaches:
 }
 ```
 
-### Handling Clamped Text Accessibility
+### クランプテキストのアクセシビリティ対応
 
 ```html
 <p class="line-clamp-3" title="Full text content goes here for tooltip access">
@@ -200,45 +200,45 @@ For maximum compatibility, combine both approaches:
 </p>
 ```
 
-## Common AI Mistakes
+## AIがよくやるミス
 
-- Forgetting one of the three required properties for single-line truncation — all of `white-space`, `overflow`, and `text-overflow` must be set
-- Missing `display: -webkit-box` or `-webkit-box-orient: vertical` in multi-line clamping, causing the clamp to silently fail
-- Using JavaScript to truncate text by character count instead of CSS, which breaks at different font sizes and screen widths
-- Not setting a width constraint on the container — `text-overflow: ellipsis` requires the element to have a bounded width (either explicit or from a flex/grid parent)
-- Using `overflow: hidden` without `text-overflow: ellipsis`, which clips text mid-character without any visual indicator
-- Applying `-webkit-line-clamp` to inline elements — it requires a block-level box with the `-webkit-box` display model
-- Not considering that clamped text hides content from screen readers — the full text is still in the DOM, but visual-only users lose context about how much is hidden
+- 1行切り詰めに必要な3つのプロパティのうち1つを忘れる — `white-space`、`overflow`、`text-overflow`のすべてを設定する必要がある
+- 複数行クランプで`display: -webkit-box`や`-webkit-box-orient: vertical`を忘れ、クランプがサイレントに失敗する
+- CSSの代わりにJavaScriptで文字数によるテキスト切り詰めを行う。これはフォントサイズや画面幅が異なると正しく動作しない
+- コンテナに幅の制約を設定しない — `text-overflow: ellipsis`は要素に制限された幅（明示的またはflex/gridの親からの暗黙的な幅）が必要
+- `text-overflow: ellipsis`なしで`overflow: hidden`を使い、視覚的なインジケーターなしにテキストが文字の途中でクリップされる
+- `-webkit-line-clamp`をインライン要素に適用する — `-webkit-box`ディスプレイモデルのブロックレベルボックスが必要
+- クランプされたテキストがスクリーンリーダーからコンテンツを隠すことを考慮しない — フルテキストはDOMに残っているが、視覚のみのユーザーはどれだけ隠されているかのコンテキストを失う
 
-## When to Use
+## 使い分け
 
-### Single-line truncation
+### 1行の切り詰め
 
-- Navigation items with dynamic labels
-- Table cells with variable-width content
-- Tags and badges with constrained widths
-- Breadcrumb links
+- 動的なラベルを持つナビゲーション項目
+- 可変幅のコンテンツを含むテーブルセル
+- 幅が制約されたタグやバッジ
+- パンくずリンク
 
-### Multi-line clamping
+### 複数行クランプ
 
-- Card descriptions in grid layouts
-- Comment previews in social interfaces
-- Product descriptions in listing pages
-- Article excerpts or teasers
+- グリッドレイアウトのカード説明文
+- ソーシャルインターフェースのコメントプレビュー
+- 一覧ページの商品説明
+- 記事の抜粋やティーザー
 
-### When NOT to truncate
+### 切り詰めるべきでない場合
 
-- Primary content that users need to read in full
-- Error messages and validation text
-- Accessibility-critical labels and instructions
-- Content where the truncated portion changes meaning (e.g., prices, dates)
+- ユーザーが全文を読む必要がある主要コンテンツ
+- エラーメッセージやバリデーションテキスト
+- アクセシビリティ上重要なラベルや説明
+- 切り詰めた部分によって意味が変わるコンテンツ（例: 価格、日付）
 
 ## Tailwind CSS
 
-Tailwind provides `truncate` for single-line ellipsis and `line-clamp-*` utilities for multi-line clamping.
+Tailwindは1行の省略記号に`truncate`、複数行クランプに`line-clamp-*`ユーティリティを提供しています。
 
 <TailwindPreview client:load
-  title="Tailwind: truncate and line-clamp"
+  title="Tailwind: truncateとline-clamp"
   html={`    <div class="grid grid-cols-3 gap-4 p-6">
       <div class="bg-indigo-50 rounded-lg p-4">
         <h3 class="text-xs font-semibold text-indigo-600 mb-3">truncate</h3>
@@ -255,7 +255,7 @@ Tailwind provides `truncate` for single-line ellipsis and `line-clamp-*` utiliti
     </div>`}
   height={200} />
 
-## References
+## 参考リンク
 
 - [MDN: text-overflow](https://developer.mozilla.org/en-US/docs/Web/CSS/text-overflow)
 - [MDN: -webkit-line-clamp](https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-line-clamp)

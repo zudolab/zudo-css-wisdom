@@ -1,41 +1,41 @@
 ---
-title: "Text Wrap: balance and pretty"
-sidebar_position: 7
+title: "text-wrap: balanceとpretty"
+sidebar_position: 3
 ---
 
 import CssPreview from '@/components/CssPreview';
 
-## The Problem
+## 問題
 
-Headings and short text blocks often end up with awkward last lines — a single orphaned word dangling on its own line, creating an uneven visual shape. Developers traditionally worked around this with manual `&nbsp;` characters, explicit `<br>` tags, or JavaScript-based solutions that measure text width and reflow content. These approaches are brittle: they break at different viewport sizes, different font sizes, and in different languages. Now CSS handles this natively with the `text-wrap` property.
+見出しや短いテキストブロックは、最終行に1つの単語だけが取り残される（オーファン）ような、不自然な行分割になることがよくあります。開発者は従来、手動の`&nbsp;`文字、明示的な`<br>`タグ、またはテキスト幅を計測してリフローするJavaScriptベースの対策で回避してきました。これらのアプローチは脆弱で、ビューポートサイズ、フォントサイズ、言語が異なると壊れます。現在ではCSSが`text-wrap`プロパティでこの問題をネイティブに処理します。
 
-## The Solution
+## 解決方法
 
-The `text-wrap` property offers three values beyond the default `wrap` that give fine-grained control over how text breaks across lines:
+`text-wrap`プロパティは、デフォルトの`wrap`に加えて、テキストの改行を細かく制御する3つの値を提供します：
 
-- **`balance`** — Distributes text evenly across all lines so no single line is significantly longer or shorter than others. Ideal for headings, labels, and short text blocks.
-- **`pretty`** — Prevents orphaned words on the last line of a paragraph. The browser adjusts earlier line breaks to ensure the final line has at least two words. Designed for body text.
-- **`stable`** — Ensures lines that have already been laid out don't re-wrap when editable content changes. Useful for `contenteditable` areas and live editing interfaces.
+- **`balance`** — テキストをすべての行に均等に分配し、特定の行だけが極端に長かったり短かったりしないようにします。見出し、ラベル、短いテキストブロックに最適です。
+- **`pretty`** — 段落の最終行にオーファン（孤立した単語）が残るのを防ぎます。ブラウザが前の行の改行位置を調整して、最終行に少なくとも2つの単語が残るようにします。本文テキスト向けに設計されています。
+- **`stable`** — 編集可能なコンテンツが変更された際に、すでにレイアウトされた行が再折り返しされないようにします。`contenteditable`領域やライブ編集インターフェースに便利です。
 
-### Core Principles
+### 基本原則
 
-#### Use `balance` for Headings and Short Text
+#### 見出しや短いテキストには`balance`を使う
 
-`text-wrap: balance` works by making all lines roughly equal in width. The browser calculates the optimal line breaks so that the shortest line is as long as possible. This creates a visually centered, even block of text — perfect for headings, pull quotes, and captions.
+`text-wrap: balance`は、すべての行をほぼ同じ幅にすることで動作します。ブラウザが最適な改行位置を計算し、最も短い行ができるだけ長くなるようにします。これにより、見出し、プルクオート、キャプションに最適な、視覚的に中央寄りで均等なテキストブロックが作られます。
 
-However, browsers limit balancing to approximately 6 lines for performance reasons. Beyond that threshold, the text falls back to normal wrapping.
+ただし、パフォーマンス上の理由から、ブラウザはバランシングを約6行までに制限しています。そのしきい値を超えると、テキストは通常の折り返しにフォールバックします。
 
-#### Use `pretty` for Body Text
+#### 本文テキストには`pretty`を使う
 
-`text-wrap: pretty` focuses specifically on the last line. It prevents a single orphaned word from appearing alone on the final line by adjusting earlier line breaks. Unlike `balance`, it doesn't try to equalize all lines — it only ensures the ending looks clean.
+`text-wrap: pretty`は最終行に特化しています。前の行の改行位置を調整して、最終行に1つの単語だけが残ることを防ぎます。`balance`とは異なり、すべての行を均等にしようとはせず、末尾がきれいに見えることだけを保証します。
 
-#### Use `stable` for Editable Content
+#### 編集可能なコンテンツには`stable`を使う
 
-`text-wrap: stable` prevents previously laid-out lines from shifting when new content is typed after them. This avoids the jarring re-wrap effect in `contenteditable` elements and text editors.
+`text-wrap: stable`は、新しいコンテンツがその後に入力された際に、以前レイアウトされた行がシフトするのを防ぎます。これにより、`contenteditable`要素やテキストエディタでの不快な再折り返し効果を回避できます。
 
-## Code Examples
+## コード例
 
-### Basic Usage
+### 基本的な使い方
 
 ```css
 h1,
@@ -49,10 +49,10 @@ p {
 }
 ```
 
-### Production Typography System
+### 本番タイポグラフィシステム
 
 ```css
-/* Balance all heading levels */
+/* すべての見出しレベルをバランス */
 h1,
 h2,
 h3,
@@ -62,21 +62,21 @@ h6 {
   text-wrap: balance;
 }
 
-/* Prevent orphans in body text */
+/* 本文テキストのオーファンを防止 */
 p,
 li,
 blockquote {
   text-wrap: pretty;
 }
 
-/* Stable wrapping for editable areas */
+/* 編集可能な領域にstableラッピング */
 [contenteditable] {
   text-wrap: stable;
 }
 ```
 
 <CssPreview client:load
-  title="Balance vs No Balance — Heading Comparison"
+  title="balance vs バランスなし — 見出しの比較"
   height={300}
   html={`    <div class="comparison">
       <div class="column">
@@ -126,7 +126,7 @@ blockquote {
     }`} />
 
 <CssPreview client:load
-  title="Pretty for Body Text — Orphan Prevention"
+  title="本文テキストのpretty — オーファン防止"
   height={320}
   html={`    <div class="comparison">
       <div class="column">
@@ -176,7 +176,7 @@ blockquote {
     }`} />
 
 <CssPreview client:load
-  title="Balance Line Limit — Short vs Long Text"
+  title="balanceの行数制限 — 短いテキスト vs 長いテキスト"
   height={420}
   html={`    <div class="limit-demo">
       <div class="block">
@@ -219,7 +219,7 @@ blockquote {
     }`} />
 
 <CssPreview client:load
-  title="Practical Typography System — Headings + Body Text"
+  title="実践的なタイポグラフィシステム — 見出し + 本文テキスト"
   height={420}
   html={`    <article class="article">
       <h1 class="article-title">Getting Started with CSS Container Queries for Responsive Components</h1>
@@ -266,7 +266,7 @@ blockquote {
     }`} />
 
 <CssPreview client:load
-  title="Progressive Enhancement — Graceful Degradation"
+  title="プログレッシブエンハンスメント — グレースフルデグラデーション"
   height={250}
   html={`    <div class="enhancement-demo">
       <div class="card">
@@ -301,16 +301,16 @@ blockquote {
       text-wrap: pretty;
     }`} />
 
-## CJK and Japanese Text Considerations
+## CJKと日本語テキストにおける注意点
 
-`text-wrap: balance` and `text-wrap: pretty` were designed with alphabetic languages in mind and behave unexpectedly with Japanese and other CJK (Chinese, Japanese, Korean) text. If you apply these properties globally to headings or paragraphs, Japanese text will often render with awkward line breaks and unusually large trailing whitespace on the right side.
+`text-wrap: balance`と`text-wrap: pretty`はアルファベット言語を前提に設計されており、日本語や他のCJK（中国語・日本語・韓国語）テキストには予期しない動作をします。見出しや段落にこれらのプロパティをグローバルに適用すると、日本語テキストが不自然な位置で改行され、右側に大きな余白が生じることがよくあります。
 
-### Why It Breaks
+### なぜ崩れるのか
 
-In alphabetic languages, the browser uses spaces and punctuation to identify word boundaries when redistributing line breaks. Japanese has no spaces between words — every character position is a valid break point. When `text-wrap: balance` tries to equalize line lengths, it splits text at arbitrary character positions, producing breaks that cut through the middle of natural phrases. The result is a heading where the first line ends mid-phrase, leaving a conspicuously large gap on the right.
+アルファベット言語では、ブラウザはスペースや句読点を使って改行位置を分散させる際の単語境界を識別します。日本語には単語間のスペースがなく、すべての文字位置が有効な改行ポイントになります。`text-wrap: balance`が行の長さを均等にしようとする際、自然な文節の途中で任意の文字位置に改行が入ってしまいます。その結果、見出しの最初の行が文節の途中で終わり、右側に目立つ大きな空白が生じます。
 
 <CssPreview client:load
-  title="text-wrap: balance — English Works, Japanese Breaks"
+  title="text-wrap: balance — 英語はうまく動作、日本語は崩れる"
   height={380}
   html={`    <div class="lang-comparison">
       <div class="lang-block">
@@ -395,23 +395,23 @@ In alphabetic languages, the browser uses spaces and punctuation to identify wor
       text-wrap: balance;
     }`} />
 
-The Japanese balanced version often breaks at an unnatural position — for example splitting after a particle like 「の」 or 「な」 — because the browser has no awareness of Japanese word boundaries. The line break feels arbitrary, and the right margin of the first line becomes conspicuously large.
+日本語でbalanceを適用したバージョンは、ブラウザが日本語の単語境界を認識しないため、「の」や「な」などの助詞の後など不自然な位置で改行されることがよくあります。改行が恣意的に感じられ、最初の行の右余白が目立つほど大きくなります。
 
-### The word-break: auto-phrase Workaround
+### word-break: auto-phraseによる回避策
 
-Chrome 119+ introduced `word-break: auto-phrase`, which uses the [BudouX](https://github.com/google/budoux) machine learning engine to identify natural phrase boundaries (文節) in Japanese text. When combined with `text-wrap: balance`, the browser balances around those phrase boundaries instead of arbitrary character positions.
+Chrome 119+では`word-break: auto-phrase`が導入されました。これは[BudouX](https://github.com/google/budoux)という機械学習エンジンを使って日本語テキストの自然な文節境界を識別します。`text-wrap: balance`と組み合わせると、ブラウザは任意の文字位置ではなく、その文節境界を基準にバランシングを行います。
 
 ```css
 h1,
 h2,
 h3 {
   text-wrap: balance;
-  word-break: auto-phrase; /* Chrome 119+ — improves Japanese line breaks */
+  word-break: auto-phrase; /* Chrome 119+ — 日本語の改行を改善 */
 }
 ```
 
 <CssPreview client:load
-  title="word-break: auto-phrase — Japanese Phrase-Aware Balancing (Chrome 119+)"
+  title="word-break: auto-phrase — 日本語の文節を考慮したバランシング（Chrome 119+）"
   height={300}
   html={`    <div class="autophrase-demo">
       <div class="autophrase-col">
@@ -460,27 +460,27 @@ h3 {
       word-break: auto-phrase;
     }`} />
 
-Note that `word-break: auto-phrase` requires `lang="ja"` on the element or an ancestor to activate Japanese phrase detection. Without the `lang` attribute, the property has no effect. Firefox does not yet support `auto-phrase`. Safari support is limited — check current browser compatibility before relying on it.
+`word-break: auto-phrase`が日本語の文節検出を有効にするには、要素または親要素に`lang="ja"`が必要です。`lang`属性がないとこのプロパティは効果を持ちません。FirefoxはまだAuto-phraseをサポートしていません。Safariのサポートも限定的です。利用前に現在のブラウザ互換性を確認してください。
 
-### Locale-Scoped Fallback Pattern
+### ロケールスコープのフォールバックパターン
 
-For Japanese or multilingual sites, the safest approach is to reset `text-wrap` for Japanese content via the `lang` attribute selector:
+日本語または多言語サイトでは、`lang`属性セレクターを使って日本語コンテンツの`text-wrap`をリセットするのが最も安全なアプローチです：
 
 ```css
-/* Apply balance globally */
+/* グローバルにbalanceを適用 */
 h1,
 h2,
 h3 {
   text-wrap: balance;
-  word-break: auto-phrase; /* helps in Chrome */
+  word-break: auto-phrase; /* Chromeで効果あり */
 }
 
-/* Reset for Japanese where balance misbehaves without auto-phrase support */
+/* auto-phraseのサポートなしにbalanceが崩れる日本語向けにリセット */
 [lang="ja"] :is(h1, h2, h3) {
   text-wrap: initial;
 }
 
-/* Re-enable balance in Chrome which supports auto-phrase */
+/* auto-phraseをサポートするChromeでbalanceを再有効化 */
 @supports (word-break: auto-phrase) {
   [lang="ja"] :is(h1, h2, h3) {
     text-wrap: balance;
@@ -489,7 +489,7 @@ h3 {
 ```
 
 <CssPreview client:load
-  title="Locale-Scoped Pattern — Reset for Japanese, Balance for English"
+  title="ロケールスコープパターン — 日本語はリセット、英語はbalance"
   height={340}
   html={`    <div class="locale-demo">
       <div class="locale-section">
@@ -559,58 +559,58 @@ h3 {
     text-wrap: pretty;
     }`} />
 
-### Summary
+### まとめ
 
-| Property | English | Japanese |
+| プロパティ | 英語 | 日本語 |
 |---|---|---|
-| `text-wrap: balance` | Works well | Breaks at arbitrary character positions |
-| `text-wrap: pretty` | Works well | Largely harmless but orphan concept doesn't map well to CJK |
-| `word-break: auto-phrase` | No effect | Improves phrase-aware breaking (Chrome 119+ only) |
+| `text-wrap: balance` | うまく動作する | 任意の文字位置で改行される |
+| `text-wrap: pretty` | うまく動作する | ほぼ無害だが、オーファンの概念がCJKにはあまり当てはまらない |
+| `word-break: auto-phrase` | 効果なし | 文節を考慮した改行を改善する（Chrome 119+のみ） |
 
-**Recommendation**: For Japanese or multilingual projects, avoid applying `text-wrap: balance` to headings unconditionally. Either skip it for Japanese content, use the locale-scoped `@supports` pattern above, or accept that the improvement will only appear in Chrome.
+**推奨**: 日本語や多言語プロジェクトでは、見出しに`text-wrap: balance`を無条件に適用しないようにしましょう。日本語コンテンツでは省略するか、上記のロケールスコープの`@supports`パターンを使うか、またはChromeでのみ改善が見られることを受け入れるかのいずれかを選択してください。
 
-## Browser Support
+## ブラウザサポート
 
-- **`text-wrap: balance`** — Supported in Chrome 114+, Edge 114+, Firefox 121+, and Safari 17.5+. Widely available as of 2025.
-- **`text-wrap: pretty`** — Supported in Chrome 117+, Edge 117+, and Safari 17.4+. Firefox support is still pending as of early 2026.
-- **`text-wrap: stable`** — Supported in Chrome 120+, Edge 120+, and Firefox 121+. Safari support is pending.
+- **`text-wrap: balance`** — Chrome 114+、Edge 114+、Firefox 121+、Safari 17.5+でサポートされています。2025年時点で広くサポートされています。
+- **`text-wrap: pretty`** — Chrome 117+、Edge 117+、Safari 17.4+でサポートされています。Firefoxは2026年初頭時点でまだ対応待ちです。
+- **`text-wrap: stable`** — Chrome 120+、Edge 120+、Firefox 121+でサポートされています。Safariは対応待ちです。
 
-All three values degrade gracefully — unsupported browsers simply use the default `text-wrap: wrap` behavior, so there is no risk in applying them today.
+3つの値すべてがグレースフルにデグレードします — 未対応のブラウザはデフォルトの`text-wrap: wrap`動作を使用するだけなので、今すぐ適用してもリスクはありません。
 
-## Common AI Mistakes
+## AIがよくやるミス
 
-- Applying `text-wrap: balance` to long body text paragraphs — it only works on blocks of approximately 6 lines or fewer, and even when it does apply, it creates an unnaturally narrow text block
-- Using JavaScript to calculate line breaks and insert `<br>` tags when `text-wrap: balance` solves the same problem natively
-- Inserting `&nbsp;` between the last two words to prevent orphans — this is fragile and breaks at different viewport widths. Use `text-wrap: pretty` instead
-- Confusing `text-wrap: balance` with `text-align: center` — balance adjusts line break positions to equalize line lengths, it does not change alignment
-- Not setting `text-wrap: balance` on heading elements by default — this should be a baseline style for all heading levels
-- Applying `text-wrap: balance` to elements that need a specific width, like navigation items or badges — balance can change the intrinsic width of the element unexpectedly
+- `text-wrap: balance`を長い本文の段落に適用する — 約6行以下のブロックでのみ動作し、適用されたとしても不自然に狭いテキストブロックになる
+- `text-wrap: balance`がネイティブに解決する問題を、JavaScriptで行分割を計算して`<br>`タグを挿入する方法で対処する
+- オーファンを防ぐために最後の2つの単語の間に`&nbsp;`を挿入する — ビューポート幅が変わると壊れる脆弱な方法。代わりに`text-wrap: pretty`を使いましょう
+- `text-wrap: balance`と`text-align: center`を混同する — balanceは行の長さを均等にするために改行位置を調整するもので、配置を変更するものではない
+- 見出し要素にデフォルトで`text-wrap: balance`を設定しない — すべての見出しレベルのベースラインスタイルとして設定すべき
+- ナビゲーション項目やバッジなど、特定の幅が必要な要素に`text-wrap: balance`を適用する — balanceは要素の固有の幅を予期しない形で変更する可能性がある
 
-## When to Use
+## 使い分け
 
 ### text-wrap: balance
 
-- Headings (`h1` through `h6`)
-- Pull quotes and blockquote text
-- Captions and figcaptions
-- Card titles and hero text
-- Any short text block (6 lines or fewer) where visual symmetry matters
+- 見出し（`h1`〜`h6`）
+- プルクオートやblockquoteテキスト
+- キャプションやfigcaption
+- カードタイトルやヒーローテキスト
+- 視覚的な対称性が重要な短いテキストブロック（6行以下）
 
 ### text-wrap: pretty
 
-- Body paragraphs
-- List items with wrapping text
-- Descriptions and summaries
-- Any long-form text where you want to avoid a single orphaned word on the last line
+- 本文の段落
+- 折り返しのあるリスト項目
+- 説明文やサマリー
+- 最終行に1つの単語だけが残るのを避けたい長文テキスト
 
 ### text-wrap: stable
 
-- `contenteditable` elements
-- Live text editors and input areas
-- Chat message composition fields
-- Any context where text is being actively edited and re-wrapping would be disruptive
+- `contenteditable`要素
+- ライブテキストエディタや入力エリア
+- チャットメッセージの作成フィールド
+- テキストが活発に編集されており、再折り返しが妨げになるコンテキスト
 
-## References
+## 参考リンク
 
 - [MDN: text-wrap](https://developer.mozilla.org/en-US/docs/Web/CSS/text-wrap)
 - [Chrome Developers: CSS text-wrap: balance](https://developer.chrome.com/blog/css-text-wrap-balance)
