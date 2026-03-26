@@ -1108,7 +1108,7 @@ The same Tailwind markup works with completely different color schemes — just 
 
 Dark mode fits naturally into the three-tier system. The palette (Tier 1) stays the same — you already have all the colors. Dark mode is simply an alternative Tier 2 mapping that picks different palette values for the same semantic tokens. The CSS `light-dark()` function makes this especially clean by co-locating both values in a single declaration.
 
-For a deep dive into dark mode techniques, see [Dark Mode Strategies](./dark-mode-strategies).
+For a deep dive into dark mode techniques, see [Dark Mode Strategies](../dark-mode-strategies).
 
 <CssPreview client:load
   title="Dark Mode via Tier 2 with light-dark()"
@@ -1283,7 +1283,7 @@ Tier 1 and Tier 3 stay exactly the same — only Tier 2 changes. Components neve
 - **Any project with more than a few components** — the overhead of three tiers pays off as soon as you need consistency
 - **Multi-theme or white-label products** — Tier 2 makes theme switching trivial
 - **Design system or component library** — components should reference theme tokens, not raw colors
-- **Dark mode** — dark mode is just another Tier 2 mapping (see [Dark Mode Strategies](./dark-mode-strategies))
+- **Dark mode** — dark mode is just another Tier 2 mapping (see [Dark Mode Strategies](../dark-mode-strategies))
 - **Gradual adoption** — you can start with Tier 1 + 2 and add Tier 3 as components need scoped colors
 
 ### When three tiers is overkill
@@ -1294,11 +1294,11 @@ Tier 1 and Tier 3 stay exactly the same — only Tier 2 changes. Components neve
 
 ## Related Articles
 
-- [Color Palette Strategy](./color-palette-strategy) — How to choose and generate palette colors (Tier 1)
-- [Dark Mode Strategies](./dark-mode-strategies) — Dark mode techniques that work with Tier 2 token swapping
-- [Advanced Custom Properties](/docs/methodology/custom-properties-advanced/) — Fallback chains, space toggles, and component APIs that implement the three-tier pattern
-- [Theming Recipes](/docs/methodology/custom-properties-advanced/theming-recipes) — Production-ready theme recipes using this architecture
-- [Color Token Patterns](/docs/methodology/tight-token-strategy/color-tokens) — Applying three-tier tokens in Tailwind's `@theme` system
+- [Color Palette Strategy](../color-palette-strategy) — How to choose and generate palette colors (Tier 1)
+- [Dark Mode Strategies](../dark-mode-strategies) — Dark mode techniques that work with Tier 2 token swapping
+- [Advanced Custom Properties](../../methodology/custom-properties-advanced/) — Fallback chains, space toggles, and component APIs that implement the three-tier pattern
+- [Theming Recipes](../../methodology/custom-properties-advanced/theming-recipes) — Production-ready theme recipes using this architecture
+- [Color Token Patterns](../../methodology/tight-token-strategy/color-tokens) — Applying three-tier tokens in Tailwind's `@theme` system
 - [Three-Tier Font-Size Strategy](../../typography/three-tier-font-size-strategy/) — The same three-tier architecture applied to font sizes
 
 ## References

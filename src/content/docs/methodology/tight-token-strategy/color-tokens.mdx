@@ -17,7 +17,7 @@ Reset all default colors and define a small set of semantic color tokens organiz
 
 ### Token Categories
 
-The categories below follow a semantic layering approach — raw palette values are replaced by role-based tokens that components reference. This is the same principle as the [Three-Tier Color Strategy](../../color/three-tier-color-strategy) (palette → theme → component), applied specifically to Tailwind's `@theme` system.
+The categories below follow a semantic layering approach — raw palette values are replaced by role-based tokens that components reference. This is the same principle as the [Three-Tier Color Strategy](../../../color/three-tier-color-strategy) (palette → theme → component), applied specifically to Tailwind's `@theme` system.
 
 Organize colors into five groups:
 
@@ -29,7 +29,7 @@ Organize colors into five groups:
 
 ### The @theme Color Block
 
-If you use [Approach B](/docs/methodology/tight-token-strategy#approach-b-skip-the-default-theme-recommended) (separate imports without the default theme), no reset line is needed. If you use Approach A (`@import "tailwindcss"`), add `--color-*: initial;` at the top.
+If you use [Approach B](../#approach-b-skip-the-default-theme-recommended) (separate imports without the default theme), no reset line is needed. If you use Approach A (`@import "tailwindcss"`), add `--color-*: initial;` at the top.
 
 ```css
 @theme {
