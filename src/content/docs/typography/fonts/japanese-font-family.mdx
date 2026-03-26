@@ -1,64 +1,64 @@
 ---
-title: 日本語フォントファミリーの指定
-sidebar_position: 9
+title: Japanese Font Family Specification
+sidebar_position: 3
 ---
 
 import CssPreview from '@/components/CssPreview';
 
-## 問題
+## The Problem
 
-日本語Webサイトの`font-family`指定は、ラテン文字サイトと比べて格段に複雑です。`sans-serif`と書くだけでは不十分で、ブラウザはOSによって大きく異なるシステムのデフォルトにフォールバックし、古いOSではビットマップフォントで日本語が表示されることもあります。主な課題は以下の通りです：
+Specifying `font-family` for Japanese websites is significantly more complex than for Latin-script sites. Simply writing `sans-serif` produces poor results — browsers fall back to system defaults that vary widely by OS and may render Japanese characters as ugly bitmapped fonts on older systems. There are several compounding challenges:
 
-1. **プラットフォームの分断**: macOSにはヒラギノフォントが、Windows 10以降には游ゴシックが、Linux/Androidにはほぼ Noto Sans CJK が搭載されています。良い表示結果を得るには、各プラットフォームのフォント名を明示的に指定する必要があります。
-2. **日本語フォントにはラテングリフが含まれる**: 日本語フォントにはすべてASCII文字の独自グリフが含まれています。日本語フォントを先に指定すると、英数字や記号がすべて日本語フォントのラテン字形でレンダリングされます。これは専用のラテン書体と比べて一般的に幅が広く、精度も劣ります。
-3. **游ゴシックのウェイト表示バグ**: Windows上の游ゴシックは、Windowsのフォントマッピングの仕様により`font-weight: normal`で極細のストロークウェイトでレンダリングされます。回避策なしでは、日本語テキストが不自然に細く表示されます。
-4. **Webフォントのファイルサイズ**: 日本語の文字セットには数千のグリフが含まれます。Noto Sans JPは非圧縮で約9MB（TTF）にもなります。WOFF2でも全文字セットは数MB以上になり、サブセット化やバリアブルフォント戦略なしでは実用的なWebフォントとして使えません。
+1. **Platform fragmentation**: macOS ships with Hiragino fonts, Windows 10+ uses Yu Gothic, and Linux/Android relies on Noto Sans CJK. Each platform requires explicit font names to get good results.
+2. **Japanese fonts contain Latin glyphs**: Every Japanese font includes its own rendition of ASCII characters. If the Japanese font is listed first, all Latin text (English, numbers, symbols) gets rendered in the Japanese font's Latin variant — typically wider and less refined than dedicated Latin typefaces.
+3. **Yu Gothic weight rendering bug**: Yu Gothic on Windows renders with a hairline-thin stroke weight at `font-weight: normal` due to a Windows font mapping quirk. Without a workaround, Japanese text appears unnaturally light.
+4. **Web font size**: A Japanese character set contains thousands of glyphs. Noto Sans JP weighs ~9MB uncompressed (TTF); even as WOFF2, a full character set is several MB — far too large for practical web font usage without subsetting or a variable font strategy.
 
-## 解決方法
+## The Solution
 
-現代的なアプローチでは、順番を慎重に検討したシステムフォントスタックを使います。順序の原則は次の通りです：
+The modern approach uses a carefully ordered system font stack. The ordering principle is:
 
-1. 欧文Webフォント（ある場合）を先頭に — 英語テキストが意図した書体で表示されるよう
-2. 日本語システムフォントをプラットフォームごとに
-3. 最終フォールバックとして`sans-serif`
+1. Latin web font(s) first — so English text uses the intended typeface
+2. Japanese system fonts, platform by platform
+3. `sans-serif` as the final catch-all
 
-### プラットフォーム別フォント一覧
+### Platform Font Reference
 
-| プラットフォーム | 推奨フォント | 備考 |
+| Platform | Recommended Font | Notes |
 |---|---|---|
-| macOS / iOS | `"Hiragino Sans"` | macOS 10.11 El Capitan以降のデフォルト。10段階のウェイト |
-| macOS（互換用） | `"Hiragino Kaku Gothic ProN"` | 古いが広くサポートされている。2ウェイトのみ |
-| Windows 10+ | `"Yu Gothic UI"` | ウェイトマッピングが正しいUIバリアント |
-| Windows 10（フォールバック） | `"Yu Gothic"` | オリジナル。デフォルトウェイトで細く表示される |
-| Windows Vista〜8.1 | `"Meiryo"` | レガシー。現在はデフォルトではないため、古いOS対応用として含める |
-| Linux / Android | `"Noto Sans CJK JP"` | オープンソース。ほとんどのLinuxディストリビューションに収録 |
-| Android（Google Fonts） | `"Noto Sans JP"` | Android上やGoogle Fonts経由で使われるサブセット版 |
+| macOS / iOS | `"Hiragino Sans"` | Default since macOS 10.11 El Capitan; 10 weight variants |
+| macOS (compatibility) | `"Hiragino Kaku Gothic ProN"` | Older but widely supported; only 2 weights |
+| Windows 10+ | `"Yu Gothic UI"` | UI variant with correct weight mapping |
+| Windows 10 (fallback) | `"Yu Gothic"` | Original; renders thin at default weight |
+| Windows Vista–8.1 | `"Meiryo"` | Legacy; no longer the default, include for old OS support |
+| Linux / Android | `"Noto Sans CJK JP"` | Open source; packaged by most Linux distros |
+| Android (Google Fonts) | `"Noto Sans JP"` | Subset version used on Android and via Google Fonts |
 
-### 推奨スタック
+### The Recommended Stack
 
 ```css
 body {
   font-family:
-    /* 1. 欧文Webフォント（@font-faceやGoogle Fonts経由で読み込んでいる場合） */
+    /* 1. Latin web font (if loaded via @font-face or Google Fonts) */
     'Inter',
-    /* 2. macOS / iOS — モダンなヒラギノ（10ウェイト） */
+    /* 2. macOS / iOS — modern Hiragino (10 weights) */
     'Hiragino Sans',
-    /* 3. Windows 10+ — "Yu Gothic UI"がウェイト表示バグを修正 */
+    /* 3. Windows 10+ — "Yu Gothic UI" fixes the weight rendering bug */
     'Yu Gothic UI',
     'Yu Gothic',
-    /* 4. 古いmacOS / iOSの互換用 */
+    /* 4. Older macOS / iOS compatibility */
     'Hiragino Kaku Gothic ProN',
     /* 5. Linux / Android */
     'Noto Sans CJK JP',
     'Noto Sans JP',
-    /* 6. 最終フォールバック */
+    /* 6. Final fallback */
     sans-serif;
 }
 ```
 
-### 欧文Webフォントを使わない場合
+### Without a Latin Web Font
 
-欧文Webフォントを読み込まない場合は、ステップ1を省略します。ブラウザは最初に解決された日本語フォントのラテングリフを使用します。これはブランドタイポグラフィとして理想的ではありませんが、許容範囲内です：
+If you are not loading any Latin web fonts, drop step 1. The browser will use the Latin glyphs built into whichever Japanese font resolves first, which is acceptable but not ideal for branded typography:
 
 ```css
 body {
@@ -73,26 +73,26 @@ body {
 }
 ```
 
-### 游ゴシックのウェイト修正
+### The Yu Gothic Weight Fix
 
-`"Yu Gothic UI"`はWindows 10以降に搭載された游ゴシックのUI最適化バリアントです。`font-weight`の値を正しくマッピングするため、`font-weight: 400`で読みやすいストロークウェイトでレンダリングされます。オリジナルの`"Yu Gothic"`は700未満のウェイトをすべて最も細いバリアントにマッピングするため、本文テキストが極細になってしまいます。
+`"Yu Gothic UI"` is a UI-optimized variant of Yu Gothic included in Windows 10 and later. It maps font-weight values correctly, so `font-weight: 400` renders at a readable stroke weight. The original `"Yu Gothic"` maps all weights below 700 to the lightest available variant, making body text appear hairline-thin.
 
-スタックでは必ず`"Yu Gothic UI"`を`"Yu Gothic"`より前に記述してください：
+Always list `"Yu Gothic UI"` before `"Yu Gothic"` in your stack:
 
 ```css
-/* 誤り — WindowsでYu Gothicがウェイト400で細く表示される */
+/* Wrong — Yu Gothic renders thin at 400 on Windows */
 font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif;
 
-/* 正しい — Yu Gothic UIはウェイトマッピングが正確 */
+/* Correct — Yu Gothic UI has proper weight mapping */
 font-family: 'Hiragino Sans', 'Yu Gothic UI', 'Yu Gothic', sans-serif;
 ```
 
-## コード例
+## Code Examples
 
-### 推奨スタックの動作確認
+### Recommended Stack in Action
 
 <CssPreview client:load
-  title="推奨日本語フォントスタック — 日本語と欧文の混在テキスト"
+  title="Recommended Japanese Font Stack — Japanese and Latin Mixed Text"
   height={280}
   html={`    <div class="font-demo">
       <p class="font-demo__label">font-family: 'Hiragino Sans', 'Yu Gothic UI', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif</p>
@@ -131,12 +131,12 @@ font-family: 'Hiragino Sans', 'Yu Gothic UI', 'Yu Gothic', sans-serif;
       margin: 0;
     }`} />
 
-### 欧文フォントの順序: 日本語フォントより前か後か
+### Latin Font Ordering: Before vs After Japanese Fonts
 
-日本語フォントには独自のラテングリフが含まれています。日本語フォントを欧文フォントより前に指定すると、すべてのASCII文字が日本語フォントのラテン字形でレンダリングされます。これは一般的に幅が広く、スペーシングやストロークコントラストも異なります。欧文フォントは必ず先頭に置いてください。
+Japanese fonts ship with their own Latin glyphs. Listing a Japanese font before your Latin font causes all ASCII characters to be rendered in the Japanese font's Latin variant — typically wider, with different spacing and stroke contrast. Always list Latin fonts first.
 
 <CssPreview client:load
-  title="欧文フォントの順序 — 日本語フォント先頭 vs 欧文フォント先頭"
+  title="Latin Font Ordering — Japanese Font First vs Latin Font First"
   height={320}
   html={`    <div class="ordering-demo">
       <div class="ordering-demo__col ordering-demo__col--wrong">
@@ -224,12 +224,12 @@ font-family: 'Hiragino Sans', 'Yu Gothic UI', 'Yu Gothic', sans-serif;
       font-family: system-ui, sans-serif;
     }`} />
 
-### 日本語テキストのフォントウェイトバリエーション
+### Font Weight Variations with Japanese Text
 
-日本語フォントは欧文フォントと同じ`font-weight`スケールをサポートしますが、動作はOSのフォントと利用可能なウェイトによって異なります。ヒラギノSansは10段階のウェイト（W0〜W9）を提供しますが、ヒラギノ角ゴシックProNは2段階（W3、W6）のみです。
+Japanese fonts support the same `font-weight` scale as Latin fonts, but behavior varies by OS font and weight availability. Hiragino Sans offers 10 weights (W0–W9), while Hiragino Kaku Gothic ProN only has 2 (W3, W6).
 
 <CssPreview client:load
-  title="フォントウェイトスケール — 異なるウェイトでの日本語テキスト"
+  title="Font Weight Scale — Japanese Text at Different Weights"
   height={360}
   html={`    <div class="weight-demo">
       <div class="weight-demo__row">
@@ -285,12 +285,12 @@ font-family: 'Hiragino Sans', 'Yu Gothic UI', 'Yu Gothic', sans-serif;
       margin: 0;
     }`} />
 
-### 包括的なシステムスタック vs 最小限のフォールバック
+### System Stack vs Minimal Fallback
 
-このデモは、包括的なシステムスタックと`sans-serif`だけに頼った場合の違いを示します。ほとんどのモダンデスクトップブラウザでは結果が似て見えることもありますが、CJKフォントの設定が不十分なLinuxシステムでは、`sans-serif`がビットマップや形の悪いフォントにフォールバックすることがあります。
+This demo shows the difference between a comprehensive system stack and just relying on `sans-serif`. On most modern desktop browsers the result may look similar, but on Linux systems without good CJK font configuration, `sans-serif` can fall back to bitmap or poorly-shaped fonts.
 
 <CssPreview client:load
-  title="包括的なスタック vs sans-serifのみ"
+  title="Comprehensive Stack vs sans-serif Only"
   height={260}
   html={`    <div class="stack-compare">
       <div class="stack-compare__col">
@@ -350,34 +350,37 @@ font-family: 'Hiragino Sans', 'Yu Gothic UI', 'Yu Gothic', sans-serif;
       font-family: sans-serif;
     }`} />
 
-## AIがよくやるミス
+## Common AI Mistakes
 
-- **日本語システムフォントをまったく省略する** — `system-ui, sans-serif`のみを使い、日本語フォント名をまったく指定しない。フォント選択がブラウザのデフォルトマッピングに完全に委ねられ、プラットフォーム間で一貫性のない結果になる
-- **日本語フォントを欧文フォントより前に並べる** — 英語テキスト、数字、記号が意図したラテン書体ではなく日本語フォントのラテングリフでレンダリングされる
-- **`"Yu Gothic UI"`なしで`"Yu Gothic"`を使う** — Windows 10で通常ウェイトのテキストが極細になる。`"Yu Gothic UI"`を必ずスタックの先に置かなければならない
-- **`"Meiryo"`をWindowsのメインフォントとして含める** — MeiryoはWindows VistaとWindows 7のデフォルトだったが、Windows 10以降は游ゴシックがデフォルト。Meiryoは互換フォールバックとして游ゴシックの後に置くべき
-- **サブセット化なしで日本語Webフォントを読み込む** — すべてのページでNoto Sans JPなど（9MB以上）をフルでダウンロードする。システムフォントならダウンロードコストゼロで同等の表示が得られる
-- **日本語テキストに`italic`スタイルを使う** — 日本語フォントには真のイタリック体がない。ブラウザはCSSのobliqueトランスフォームを適用するため、文字が斜めに傾いて不自然に見える
-- **ヒラギノ角ゴシックProNをmacOSの現行フォントと見なす** — `"Hiragino Sans"`（macOS 10.11で追加）は10段階のウェイトを持つ現代的な後継フォント。ProNの2ウェイトより優れており、常にヒラギノSansを先に並べるべき
+- **Omitting Japanese system fonts entirely** — using only `system-ui, sans-serif` without any Japanese font names, which leaves font selection entirely to the browser's default mapping and produces inconsistent results across platforms
+- **Listing Japanese fonts before Latin fonts** — causing English text, numbers, and punctuation to be rendered in the Japanese font's Latin glyph set rather than the intended Latin typeface
+- **Using `"Yu Gothic"` without `"Yu Gothic UI"`** — resulting in hairline-thin text on Windows 10 at normal weight; `"Yu Gothic UI"` must come first in the stack
+- **Including `"Meiryo"` as the primary Windows font** — Meiryo was the default on Windows Vista and 7, but Yu Gothic has been the default since Windows 10; Meiryo should appear after Yu Gothic in a compatibility fallback position
+- **Loading Japanese web fonts without subsetting** — downloading full Noto Sans JP or similar (~9MB+) for every page, when system fonts would render just as well with zero download cost
+- **Using `italic` style on Japanese text** — Japanese fonts have no true italic variant; browsers apply a CSS oblique transform that makes characters look slanted and unnatural
+- **Assuming Hiragino Kaku Gothic ProN is the modern macOS font** — `"Hiragino Sans"` (added in macOS 10.11) is the modern replacement with 10 weight variants vs ProN's 2; always list Hiragino Sans first
 
-## 使い分け
+## When to Use
 
-**フルシステムフォントスタック**は、次のような日本語Webサイトやアプリケーションで使います：
-- ページに日本語テキスト（本文、見出し、UIラベル）が含まれる
-- macOS、Windows、Linux間で一貫したレンダリングが必要
-- 日本語Webフォントを読み込まない（パフォーマンスを考慮した一般的なケース）
+**Use the full system font stack** for any Japanese-language website or web application where:
 
-**欧文Webフォントを先頭に含める**のは：
-- ブランドが特定のラテン書体（Inter、Noto Sans、Robotoなど）を使っている
-- プラットフォーム間で欧文の一貫したレンダリングが重要
-- 他の理由（バリアブルフォントなど）ですでにWebフォントを読み込んでいる
+- The page contains Japanese text (body copy, headings, UI labels)
+- You want consistent rendering across macOS, Windows, and Linux
+- You are not loading a Japanese web font (the common case for performance)
 
-**日本語Webフォント**（Noto Sans JP、BIZ UDPGothicなど）を読み込むのは：
-- プリント品質のデザインシステムなど、クロスプラットフォームでの完全な視覚的一貫性が必要
-- ファイルサイズを管理するためのフォントサブセット化またはプログレッシブローディング戦略を採用している
-- システムフォントでは利用できない特定のグリフスタイルをデザインが要求している
+**Include a Latin web font first** when:
 
-## 参考リンク
+- Your brand uses a specific Latin typeface (Inter, Noto Sans, Roboto, etc.)
+- Consistent Latin rendering across platforms is important
+- The web font is already being loaded for other reasons (variable fonts, etc.)
+
+**Load a Japanese web font** (Noto Sans JP, BIZ UDPGothic, etc.) only when:
+
+- Exact cross-platform visual consistency is required (print-quality design systems)
+- You are using font subsetting or progressive loading strategies to control file size
+- The design calls for a specific glyph style not available in system fonts
+
+## References
 
 - [Best Japanese CSS font-family in 2025 — Bloomstreet Japan](https://www.bloomstreetjapan.com/best-japanese-font-setting-for-websites/)
 - [Japanese web safe fonts and how to use them — JStockMedia](https://jstockmedia.com/blog/japanese-web-safe-fonts-and-how-to-use-them-in-web-design/)
