@@ -1,1 +1,5 @@
-{ "label": "Scroll", "position": 3, "noPage": true }
+{
+  "label": "Scroll",
+  "position": 3,
+  "noPage": true
+}

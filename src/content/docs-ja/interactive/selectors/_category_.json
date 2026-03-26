@@ -1,1 +1,5 @@
-{ "label": "セレクター", "position": 2, "noPage": true }
+{
+  "label": "セレクター",
+  "position": 2,
+  "noPage": true
+}

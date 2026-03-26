@@ -1,1 +1,5 @@
-{ "label": "ステート & トランジション", "position": 1, "noPage": true }
+{
+  "label": "ステート & トランジション",
+  "position": 1,
+  "noPage": true
+}
