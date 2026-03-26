@@ -1,26 +1,26 @@
 ---
-title: Parent-State Child Styling
-sidebar_position: 9
+title: 親要素の状態による子要素のスタイリング
+sidebar_position: 3
 ---
 
 import CssPreview from '@/components/CssPreview';
 
-## The Problem
+## 問題
 
-Styling child elements based on a parent's interactive state (hover, focus, checked, etc.) is one of the most common UI patterns — cards where hovering highlights the title, nav items where focusing an input changes an icon, form groups where checking a box reveals more content. AI agents tend to reach for JavaScript event listeners and class toggling for these patterns, or apply hover styles directly to each child element individually. Tailwind CSS solved this elegantly with `group` and `group-hover:` utilities, but the underlying CSS patterns are straightforward and more powerful than many developers realize.
+親のインタラクティブ状態（ホバー、フォーカス、チェックなど）に基づいて子要素をスタイリングすることは、最も一般的なUIパターンの1つです — カードをホバーするとタイトルがハイライトされたり、inputにフォーカスするとアイコンが変わったり、チェックボックスをオンにすると追加コンテンツが表示されたりします。AIエージェントはこれらのパターンにJavaScriptのイベントリスナーとクラストグルを使おうとしたり、各子要素に個別にホバースタイルを適用したりする傾向があります。Tailwind CSSは `group` と `group-hover:` ユーティリティでこれをエレガントに解決しましたが、基盤となるCSSパターンはシンプルで、多くの開発者が認識しているよりも強力です。
 
-## The Solution
+## 解決方法
 
-CSS provides three complementary mechanisms for parent-state-driven child styling:
+CSSは親の状態に基づく子スタイリングのための3つの補完的なメカニズムを提供しています：
 
-1. **Descendant combinators with pseudo-classes** — `.parent:hover .child` targets children when the parent is hovered
-2. **`:focus-within`** — Matches when the element or any descendant has focus
-3. **`:has()`** — The most powerful: style a parent (and its children) based on any child's state
+1. **擬似クラスと子孫コンビネーター** — `.parent:hover .child` で親がホバーされた時に子をターゲットにします
+2. **`:focus-within`** — 要素自体またはその子孫がフォーカスを持つ時にマッチします
+3. **`:has()`** — 最も強力：任意の子の状態に基づいて親（およびその子）をスタイリングします
 
-Together, these cover every scenario that Tailwind's `group-*` utilities handle, and more.
+これらを組み合わせることで、Tailwindの `group-*` ユーティリティが処理するすべてのシナリオ、さらにそれ以上をカバーします。
 
 <CssPreview client:load
-  title="Card — Hover or Tab to see coordinated child changes"
+  title="カード — ホバーまたはTabで連動する子の変化を確認"
   html={`
     <div class="demo">
       <div class="card" tabindex="0">
@@ -92,11 +92,11 @@ Together, these cover every scenario that Tailwind's `group-*` utilities handle,
     }
     `} />
 
-## Code Examples
+## コード例
 
-### Basic: Parent Hover → Child Styling
+### 基本：親のホバー → 子のスタイリング
 
-The simplest pattern. When the parent is hovered, children respond.
+最もシンプルなパターンです。親がホバーされると子が応答します。
 
 ```css
 .card:hover .card__title {
@@ -112,11 +112,11 @@ The simplest pattern. When the parent is hovered, children respond.
 }
 ```
 
-This is what Tailwind's `group` / `group-hover:` compiles to. The parent is the "group" and children react to its state.
+これはTailwindの `group` / `group-hover:` がコンパイルされる先のCSSです。親が「グループ」で、子がその状態に反応します。
 
-### Focus-Within: Keyboard-Accessible Group Focus
+### Focus-Within：キーボードアクセシブルなグループフォーカス
 
-`:focus-within` matches when the element itself or **any descendant** has focus. This is essential for keyboard accessibility — it gives you the same coordinated styling that `:hover` provides on the parent, but for focus events.
+`:focus-within` は要素自体または**任意の子孫**がフォーカスを持つ時にマッチします。キーボードアクセシビリティに不可欠で、`:hover` が親に対して提供するのと同じ連動スタイリングをフォーカスイベントに対して実現します。
 
 ```css
 /* The search bar container highlights when its input is focused */
@@ -136,7 +136,7 @@ This is what Tailwind's `group` / `group-hover:` compiles to. The parent is the 
 ```
 
 <CssPreview client:load
-  title="Search Bar — Click or Tab into the input"
+  title="検索バー — inputをクリックまたはTabで移動"
   html={`
     <div class="demo">
       <div class="search-bar">
@@ -198,9 +198,9 @@ This is what Tailwind's `group` / `group-hover:` compiles to. The parent is the 
     }
     `} />
 
-### :has() — The Most Powerful Group Pattern
+### :has() — 最も強力なグループパターン
 
-`:has()` goes beyond hover and focus. It lets you style a parent (and its children) based on **any child state**: checked checkboxes, filled inputs, selected options, or even structural conditions.
+`:has()` はホバーやフォーカスを超えた能力を持ちます。**任意の子の状態**（チェックされたチェックボックス、入力されたinput、選択されたオプション、さらには構造的条件）に基づいて親（およびその子）をスタイリングできます。
 
 ```css
 /* Highlight the form group when its checkbox is checked */
@@ -221,7 +221,7 @@ This is what Tailwind's `group` / `group-hover:` compiles to. The parent is the 
 ```
 
 <CssPreview client:load
-  title="Option Cards — Click to select (uses :has(:checked))"
+  title="オプションカード — クリックで選択（:has(:checked) 使用）"
   html={`
     <div class="demo">
       <label class="option-card">
@@ -339,9 +339,9 @@ This is what Tailwind's `group` / `group-hover:` compiles to. The parent is the 
     }
     `} />
 
-### Combining Hover and Focus-Within
+### ホバーと Focus-Within の組み合わせ
 
-For robust interactive components, layer both `:hover` and `:focus-within` so the component works for mouse and keyboard users alike.
+堅牢なインタラクティブコンポーネントには、マウスとキーボードの両方のユーザーで動作するよう `:hover` と `:focus-within` の両方を組み合わせましょう。
 
 ```css
 .nav-item:hover .nav-item__tooltip,
@@ -353,7 +353,7 @@ For robust interactive components, layer both `:hover` and `:focus-within` so th
 ```
 
 <CssPreview client:load
-  title="Nav Item with Tooltip — Hover or Tab to reveal"
+  title="ナビアイテムとツールチップ — ホバーまたはTabで表示"
   html={`
     <div class="demo">
       <nav class="nav">
@@ -439,12 +439,12 @@ For robust interactive components, layer both `:hover` and `:focus-within` so th
     }
     `} />
 
-### Toggle Visibility with :has(:checked)
+### :has(:checked) による表示切り替え
 
-A classic pattern: show/hide content sections based on a checkbox or radio state, with no JavaScript.
+クラシックなパターンです。チェックボックスやラジオの状態に基づいてコンテンツセクションの表示/非表示を切り替えます。JavaScriptは不要です。
 
 <CssPreview client:load
-  title="Accordion — Click to expand sections (pure CSS)"
+  title="アコーディオン — クリックでセクションを展開（純粋なCSS）"
   html={`
     <div class="accordion">
       <div class="accordion__item">
@@ -568,9 +568,9 @@ A classic pattern: show/hide content sections based on a checkbox or radio state
     }
     `} />
 
-### Nested Groups: Multiple Ancestor Levels
+### ネストされたグループ：複数の祖先レベル
 
-When you need different ancestor levels to drive different child styles, use distinct class names for each level.
+異なる祖先レベルが異なる子スタイルを駆動する必要がある場合、各レベルに個別のクラス名を使用しましょう。
 
 ```css
 /* Outer group: the card */
@@ -584,10 +584,10 @@ When you need different ancestor levels to drive different child styles, use dis
 }
 ```
 
-This is the CSS equivalent of Tailwind's named groups (`group/card`, `group/footer`) — each ancestor's state independently controls its own descendants.
+これはTailwindの名前付きグループ（`group/card`、`group/footer`）のCSS等価物です。各祖先の状態がそれぞれの子孫を独立して制御します。
 
 <CssPreview client:load
-  title="Nested Groups — Hover the card, then hover the footer link"
+  title="ネストされたグループ — カードをホバーし、次にフッターリンクをホバー"
   html={`
     <div class="demo">
       <div class="card">
@@ -677,29 +677,29 @@ This is the CSS equivalent of Tailwind's named groups (`group/card`, `group/foot
     }
     `} />
 
-## Tailwind group → CSS Mapping
+## Tailwind group → CSS マッピング
 
-| Tailwind Utility | CSS Equivalent |
-|---|---|
+| Tailwind ユーティリティ | CSS 等価物 |
+| --- | --- |
 | `group` + `group-hover:text-blue` | `.parent:hover .child { color: blue; }` |
 | `group` + `group-focus:opacity-100` | `.parent:focus .child { opacity: 1; }` |
 | `group` + `group-focus-within:ring-2` | `.parent:focus-within .child { ... }` |
 | `group` + `group-active:scale-95` | `.parent:active .child { transform: scale(0.95); }` |
-| `group/name` (named groups) | Use distinct class names per ancestor level |
+| `group/name`（名前付きグループ） | 祖先レベルごとに個別のクラス名を使用 |
 | `group-has-[:checked]:bg-blue` | `.parent:has(:checked) { background: blue; }` |
 
-## Common AI Mistakes
+## AIがよくやるミス
 
-- **Using JavaScript to toggle classes for hover effects** — Use `.parent:hover .child` instead. No event listeners needed.
-- **Duplicating hover styles on every child element** — Apply `:hover` to the parent once, then style all children from that single rule.
-- **Forgetting keyboard accessibility** — Always pair `:hover` with `:focus-within` for interactive containers. Hover-only patterns exclude keyboard users.
-- **Over-nesting with :has()** — When a simple `.parent:hover .child` suffices, don't reach for `:has()`. Use `:has()` when you need to react to a child's internal state (checked, valid, empty).
+- **ホバーエフェクトにJavaScriptでクラスをトグルする** — `.parent:hover .child` を使いましょう。イベントリスナーは不要です。
+- **すべての子要素にホバースタイルを重複して書く** — 親に一度 `:hover` を適用し、そこからすべての子をスタイリングしましょう。
+- **キーボードアクセシビリティを忘れる** — インタラクティブコンテナには常に `:hover` と `:focus-within` をペアにしましょう。ホバーのみのパターンはキーボードユーザーを排除します。
+- **`:has()` を過度に使用する** — シンプルな `.parent:hover .child` で十分な場合に `:has()` を使わないでください。`:has()` は子の内部状態（checked、valid、empty）に反応する必要がある場合に使いましょう。
 
-## When to Use
+## 使い分け
 
-- **Card hover effects**: Coordinated title, icon, and background changes
-- **Form groups**: Highlight the entire group when an input is focused or invalid
-- **Navigation menus**: Show tooltips or dropdowns on hover/focus
-- **Option selectors**: Style selected options based on radio/checkbox state
-- **Accordion/disclosure**: Toggle visibility with `:has(:checked)`
-- **Any pattern where Tailwind uses `group`** — the CSS is always a descendant combinator + pseudo-class
+- **カードのホバーエフェクト**：タイトル、アイコン、背景の連動変化に使います。
+- **フォームグループ**：inputがフォーカスされた時や無効な時にグループ全体をハイライトする場合に使います。
+- **ナビゲーションメニュー**：ホバー/フォーカス時にツールチップやドロップダウンを表示する場合に使います。
+- **オプションセレクター**：ラジオ/チェックボックスの状態に基づいて選択されたオプションをスタイリングする場合に使います。
+- **アコーディオン/ディスクロージャー**：`:has(:checked)` で表示を切り替える場合に使います。
+- **Tailwindが `group` を使用するパターンすべて** — CSSは常に子孫コンビネーター + 擬似クラスです。

@@ -1,26 +1,26 @@
 ---
-title: ":is() and :where() Selectors"
-sidebar_position: 12
+title: ":is()と:where()セレクター"
+sidebar_position: 2
 ---
 
 import CssPreview from '@/components/CssPreview';
 
-## The Problem
+## 問題
 
-CSS selectors that share the same declarations require writing out every combination individually, leading to verbose and repetitive rule sets. Selector lists with different specificity levels make it difficult to create easily overridable base styles. When building resets, defaults, or library CSS, specificity conflicts with consumer styles are a constant battle. AI agents typically generate repetitive selectors and rarely use `:is()` or `:where()` to manage specificity intentionally.
+同じ宣言を共有するCSSセレクターは、すべての組み合わせを個別に書く必要があり、冗長で繰り返しの多いルールセットになります。異なる詳細度レベルのセレクターリストは、簡単にオーバーライドできるベーススタイルの作成を困難にします。リセット、デフォルト、ライブラリCSSを構築する際、コンシューマーのスタイルとの詳細度の競合は常に課題です。AIエージェントは通常、繰り返しの多いセレクターを生成し、詳細度を意図的に管理するために`:is()`や`:where()`を使うことはほとんどありません。
 
-## The Solution
+## 解決方法
 
-`:is()` and `:where()` are functional pseudo-class selectors that accept a selector list and match any element that matches at least one selector in that list. They reduce repetition by grouping selectors. The critical difference is specificity:
+`:is()`と`:where()`は、セレクターリストを受け取り、そのリストの少なくとも1つのセレクターに一致する要素をマッチさせる関数擬似クラスセレクターです。セレクターをグループ化することで繰り返しを減らします。重要な違いは詳細度です：
 
-- **`:is()`** takes on the specificity of its most specific argument
-- **`:where()`** always has zero specificity `(0, 0, 0)`
+- **`:is()`** は最も具体的な引数の詳細度を取る
+- **`:where()`** は常にゼロの詳細度`(0, 0, 0)`を持つ
 
-This makes `:where()` ideal for default/base styles that should be easily overridable, and `:is()` for grouping selectors while preserving specificity.
+これにより、`:where()`は簡単にオーバーライドできるべきデフォルト/ベーススタイルに最適であり、`:is()`は詳細度を保持しながらセレクターをグループ化するのに適しています。
 
-## Code Examples
+## コード例
 
-### Reducing Selector Repetition with `:is()`
+### `:is()`によるセレクターの繰り返し削減
 
 ```css
 /* Without :is() — verbose and repetitive */
@@ -42,9 +42,9 @@ aside h3 {
 }
 ```
 
-### Zero-Specificity Defaults with `:where()`
+### `:where()`によるゼロ詳細度のデフォルト
 
-Create base styles that any single class can easily override.
+どんな単一クラスでも簡単にオーバーライドできるベーススタイルを作成します。
 
 ```css
 /* Base styles with zero specificity — trivially overridable */
@@ -69,7 +69,7 @@ Create base styles that any single class can easily override.
 }
 ```
 
-### Building an Overridable Reset
+### オーバーライド可能なリセットの構築
 
 ```css
 /* A reset that never fights with author styles */
@@ -94,9 +94,9 @@ Create base styles that any single class can easily override.
 }
 ```
 
-### Combining `:is()` and `:where()` Strategically
+### `:is()`と`:where()`の戦略的な組み合わせ
 
-Use `:is()` for the parts where you want specificity to contribute, and `:where()` for the parts you want to be zero.
+詳細度を寄与させたい部分には`:is()`を、ゼロにしたい部分には`:where()`を使用します。
 
 ```css
 /* The .article class contributes specificity (0,1,0),
@@ -112,9 +112,9 @@ Use `:is()` for the parts where you want specificity to contribute, and `:where(
 }
 ```
 
-### Forgiving Selector Lists
+### 寛容なセレクターリスト
 
-Both `:is()` and `:where()` use a forgiving selector list. An invalid selector in the list does not invalidate the entire rule.
+`:is()`と`:where()`の両方が寛容なセレクターリストを使用します。リスト内の無効なセレクターがルール全体を無効にすることはありません。
 
 ```css
 /* If :未来的-selector is invalid, the rest still works */
@@ -126,7 +126,7 @@ Both `:is()` and `:where()` use a forgiving selector list. An invalid selector i
 /* .card, .panel, :未来的-selector { border-radius: 8px; } — entire rule is dropped */
 ```
 
-### Simplifying Nested Selectors
+### ネストされたセレクターの簡略化
 
 ```css
 /* Complex nesting without :is() */
@@ -143,7 +143,7 @@ Both `:is()` and `:where()` use a forgiving selector list. An invalid selector i
 }
 ```
 
-### Specificity Comparison
+### 詳細度の比較
 
 ```css
 /* :is() specificity = highest argument */
@@ -165,7 +165,7 @@ Both `:is()` and `:where()` use a forgiving selector list. An invalid selector i
 }
 ```
 
-### Library/Design System Pattern
+### ライブラリ/デザインシステムパターン
 
 ```css
 /* Design system default — zero specificity via :where() */
@@ -190,37 +190,37 @@ Both `:is()` and `:where()` use a forgiving selector list. An invalid selector i
 }
 ```
 
-## Browser Support
+## ブラウザサポート
 
 - Chrome 88+
 - Firefox 78+
 - Safari 14+
 - Edge 88+
 
-Both `:is()` and `:where()` have global support exceeding 96%. They are safe for production use.
+`:is()`と`:where()`の両方がグローバルサポート96%を超えています。プロダクション利用に安全です。
 
-## Common AI Mistakes
+## AIがよくやるミス
 
-- Not knowing `:where()` exists and generating verbose selector lists that create specificity conflicts
-- Using `:is()` when `:where()` would be more appropriate (e.g., for base/reset styles that should be easily overridable)
-- Writing out every selector combination manually instead of grouping with `:is()`
-- Not leveraging `:where()` for library/design system CSS to avoid specificity wars with consumers
-- Confusing the specificity behavior — thinking `:is()` has zero specificity like `:where()`
-- Not realizing that `:is()` and `:where()` use forgiving selector lists (invalid selectors don't break the rule)
-- Using `!important` to override base styles when `:where()` would have made them trivially overridable
+- `:where()`の存在を知らず、詳細度の競合を引き起こす冗長なセレクターリストを生成する
+- `:where()`の方が適切な場合に`:is()`を使用する（例：簡単にオーバーライドできるべきベース/リセットスタイル）
+- セレクターの全組み合わせを手動で書き出し、`:is()`でグループ化しない
+- ライブラリ/デザインシステムCSSでコンシューマーとの詳細度競合を避けるために`:where()`を活用しない
+- 詳細度の動作を混同する — `:is()`が`:where()`のようにゼロ詳細度だと思い込む
+- `:is()`と`:where()`が寛容なセレクターリストを使用すること（無効なセレクターがルールを壊さない）を認識していない
+- `:where()`なら簡単にオーバーライドできたはずのベーススタイルのオーバーライドに`!important`を使用する
 
-## When to Use
+## 使い分け
 
-- **`:is()`**: Group selectors to reduce repetition while preserving specificity
-- **`:where()`**: Create zero-specificity base styles, resets, and design system defaults
-- **Both**: Build forgiving selector lists that handle unknown or future selectors gracefully
-- **`:where()` for library CSS**: Ensure consumer styles can always override without `!important`
-- **Combined**: Use `:is()` for the specificity-contributing part and `:where()` for the zero-specificity part of a selector
+- **`:is()`**：詳細度を保持しながら繰り返しを減らすためにセレクターをグループ化する
+- **`:where()`**：ゼロ詳細度のベーススタイル、リセット、デザインシステムのデフォルトを作成する
+- **両方**：未知または将来のセレクターを適切に処理する寛容なセレクターリストを構築する
+- **ライブラリCSSには`:where()`**：コンシューマーのスタイルが常に`!important`なしでオーバーライドできることを保証する
+- **組み合わせ**：セレクターの詳細度を寄与させる部分に`:is()`を、ゼロ詳細度の部分に`:where()`を使用する
 
-## Live Previews
+## ライブプレビュー
 
 <CssPreview client:load
-  title=":is() — Selector Grouping"
+  title=":is() — セレクターのグループ化"
   html={`
     <article>
       <h1>Article Heading (h1)</h1>
@@ -235,7 +235,9 @@ Both `:is()` and `:where()` have global support exceeding 96%. They are safe for
     </div>
     `}
   css={`
+
     * {
+
       margin: 0;
     }
     
@@ -279,7 +281,7 @@ Both `:is()` and `:where()` have global support exceeding 96%. They are safe for
     `} />
 
 <CssPreview client:load
-  title=":where() — Zero Specificity (Easily Overridable)"
+  title=":where() — ゼロ詳細度（簡単にオーバーライド可能）"
   html={`
     <div class="demo">
       <a href="#" class="link-default">Default link (styled by :where)</a>
@@ -319,7 +321,7 @@ Both `:is()` and `:where()` have global support exceeding 96%. They are safe for
     }
     `} />
 
-## References
+## 参考リンク
 
 - [:is() - MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:is)
 - [:where() - MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:where)
