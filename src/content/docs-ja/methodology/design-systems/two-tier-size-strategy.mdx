@@ -1,15 +1,15 @@
 ---
-title: Two-Tier Size Strategy
-sidebar_position: 6
+title: 2層サイズ戦略
+sidebar_position: 2
 ---
 
 import CssPreview from '@/components/CssPreview';
 
-## The Problem
+## 問題
 
-When using the [tight token strategy](./tight-token-strategy/), all Tailwind defaults are reset — including the numeric spacing scale that powers `h-4`, `w-4`, `size-8`, and similar width/height utilities. The moment someone needs to size an icon or set a card width, these classes stop working.
+[タイトトークン戦略](./tight-token-strategy/)を使用している場合、Tailwind のデフォルトはすべてリセットされます。これには `h-4`、`w-4`、`size-8` などの幅・高さユーティリティを支える数値スペーシングスケールも含まれます。アイコンのサイズ指定やカードの幅設定が必要になった瞬間、これらのクラスは機能しなくなります。
 
-The instinct — especially from AI agents — is to re-add numeric spacing tokens:
+特に AI エージェントがよくやるのは、数値スペーシングトークンを再追加することです：
 
 ```css
 @theme {
@@ -23,32 +23,32 @@ The instinct — especially from AI agents — is to re-add numeric spacing toke
 }
 ```
 
-This defeats the purpose. It re-imports Tailwind's default numeric scale with no semantic value. `h-4 w-4` tells you nothing — is it an icon? A spacer? A decorative element? You are back to the same problem the tight token strategy was designed to solve.
+これでは本末転倒です。Tailwind のデフォルト数値スケールをセマンティックな意味なく再インポートしているだけです。`h-4 w-4` は何も伝えません — アイコンなのか、スペーサーなのか、装飾要素なのか分かりません。タイトトークン戦略が解決しようとしていた問題に逆戻りしてしまいます。
 
-### Why This Property Is Different
+### このプロパティが特殊な理由
 
-Some CSS properties have natural scales worth abstracting:
+CSS プロパティの中には、抽象化する価値のある自然なスケールを持つものがあります：
 
-- **Spacing** (padding, margin, gap) — has a consistent rhythm across the UI → semantic axes (hsp/vsp) make sense
-- **Font sizes** — has a clear hierarchy from captions to headings → an abstract scale (xs–2xl) makes sense
-- **Colors** — has a palette of raw values that get mapped to roles → three tiers make sense
+- **スペーシング**（padding、margin、gap）— UI 全体で一貫したリズムがある → セマンティック軸（hsp/vsp）が理にかなう
+- **フォントサイズ** — キャプションから見出しまで明確な階層がある → 抽象スケール（xs〜2xl）が理にかなう
+- **カラー** — 生の値のパレットをロールにマッピングする → 3層が理にかなう
 
-**Width/height is different.** A 16px icon, a 40px avatar, a 320px card, and a 64px sidebar toggle have nothing in common. There is no natural progression, no rhythm, no hierarchy. An abstract scale like `size-4`, `size-8`, `size-16` is just arbitrary numbers pretending to be meaningful.
+**幅・高さは異なります。** 16px のアイコン、40px のアバター、320px のカード、64px のサイドバートグルには共通点がありません。自然な段階もリズムも階層もありません。`size-4`、`size-8`、`size-16` のような抽象スケールは、意味があるふりをした単なる任意の数値です。
 
-## The Solution
+## 解決方法
 
-Use a **two-tier approach** — skip the abstract scale entirely:
+**2層アプローチ**を使います — 抽象スケールは完全にスキップします：
 
-| Tier | Name | Purpose | Example |
+| 層 | 名前 | 目的 | 例 |
 | --- | --- | --- | --- |
-| 1 | **Theme** | Design-level sizes that define the visual system | `--icon-sm: 16px` |
-| 2 | **Component** | One-off sizes specific to one component | `w-[28px] h-[28px]` |
+| 1 | **テーマ** | ビジュアルシステムを定義するデザインレベルのサイズ | `--icon-sm: 16px` |
+| 2 | **コンポーネント** | 1つのコンポーネントに固有の一回限りのサイズ | `w-[28px] h-[28px]` |
 
-The key insight: **there is no Tier 0 (abstract scale) for width/height.** Semantic names are the first and only token layer. Everything else is an arbitrary value.
+重要なポイント：**幅・高さには Tier 0（抽象スケール）がありません。** セマンティックな名前が最初で唯一のトークンレイヤーです。それ以外はすべて任意の値です。
 
-### Tier 1: Theme Tokens
+### Tier 1: テーマトークン
 
-Define tokens when a size represents a **design decision** — a deliberate choice about how the UI is structured:
+サイズが**デザイン判断**を表す場合 — UI の構成に関する意図的な選択の場合にトークンを定義します：
 
 ```css
 @theme {
@@ -68,15 +68,15 @@ Define tokens when a size represents a **design decision** — a deliberate choi
 }
 ```
 
-This generates utilities like `w-icon-md h-icon-md`, `w-avatar-sm h-avatar-sm`, and `max-w-content-width` — self-documenting class names that tell you exactly what the size is for.
+これにより `w-icon-md h-icon-md`、`w-avatar-sm h-avatar-sm`、`max-w-content-width` などのユーティリティが生成されます。クラス名が自己文書化されており、そのサイズが何のためのものか一目で分かります。
 
-Whether to create a token is an **architectural and design judgment**, not a usage-count threshold. You define `--spacing-content-width: 800px` because your design says "the main column is 800px" — even if only one component uses it today. It's the same kind of decision as choosing a brand color or a type scale: it comes from the design, not from counting how many files reference a value.
+トークンを作成するかどうかは**アーキテクチャとデザインの判断**であり、使用回数の閾値ではありません。デザインが「メインカラムは 800px」と定めているから `--spacing-content-width: 800px` を定義するのです — たとえ今日1つのコンポーネントしか使っていなくても。これはブランドカラーやタイプスケールの選択と同じ種類の判断です：デザインから来るのであって、何ファイルがその値を参照しているか数えて決めるものではありません。
 
-This is similar to the "should we extract this to a utility function?" debate in application architecture. The answer isn't "when 3 files import it" — it's about whether the concept deserves a name in the system.
+これはアプリケーションアーキテクチャにおける「このロジックをユーティリティ関数に切り出すべきか？」の議論に似ています。答えは「3ファイルがインポートしたら」ではなく、その概念がシステム内で名前を持つに値するかどうかです。
 
-### Tier 2: Arbitrary Values
+### Tier 2: 任意の値
 
-For everything else — one-off component dimensions, calculated layouts, structural details — use Tailwind's bracket syntax:
+それ以外のすべて — 一回限りのコンポーネント寸法、計算されたレイアウト、構造的な詳細 — には Tailwind のブラケット構文を使います：
 
 ```html
 <!-- Component-specific sizing -->
@@ -89,16 +89,16 @@ For everything else — one-off component dimensions, calculated layouts, struct
 <div class="h-[calc(100vh-64px)]">...</div>
 ```
 
-When a value is purely a structural detail of one component (a button's exact padding, a grid's column template), arbitrary values are the right choice. When a value represents a design decision that defines the system, it belongs in Tier 1 — regardless of how many components currently use it.
+値が1つのコンポーネントの構造的な詳細（ボタンの正確なパディング、グリッドのカラムテンプレートなど）に過ぎない場合、任意の値が正しい選択です。値がシステムを定義するデザイン判断を表す場合は、現在何個のコンポーネントが使っているかに関係なく Tier 1 に属します。
 
-## Demos
+## デモ
 
-### The Wrong Approach: Re-importing Numeric Sizes
+### 間違ったアプローチ: 数値サイズの再インポート
 
-This demo shows what happens when you re-add Tailwind's numeric spacing scale for width/height. The class names are meaningless — `size-4`, `size-5`, `size-8` tell you nothing about what they're sizing.
+このデモは、Tailwind の数値スペーシングスケールを幅・高さに再追加した場合に何が起こるかを示しています。クラス名には意味がありません — `size-4`、`size-5`、`size-8` は何をサイズ指定しているのか伝えてくれません。
 
 <CssPreview client:load
-  title="Wrong: Abstract Numeric Sizes (size-4, size-8, etc.)"
+  title="間違った例: 抽象的な数値サイズ（size-4、size-8 など）"
   height={280}
   html={`    <div class="wrong-demo">
       <div class="wrong-demo__section">
@@ -208,12 +208,12 @@ This demo shows what happens when you re-add Tailwind's numeric spacing scale fo
       line-height: 1.4;
     }`} />
 
-### The Right Approach: Theme Tokens for Shared Sizes
+### 正しいアプローチ: 共有サイズにテーマトークンを使う
 
-With semantic theme tokens, the class names are self-documenting. Every developer knows what `w-icon-md h-icon-md` means — and changing the icon size updates every component at once.
+セマンティックなテーマトークンを使えば、クラス名が自己文書化されます。`w-icon-md h-icon-md` の意味はすべての開発者が分かります。アイコンサイズを変更すれば、すべてのコンポーネントが一度に更新されます。
 
 <CssPreview client:load
-  title="Right: Semantic Theme Tokens (icon-md, avatar-sm, etc.)"
+  title="正しい例: セマンティックテーマトークン（icon-md、avatar-sm など）"
   height={360}
   html={`    <div class="right-demo">
       <div class="right-demo__section">
@@ -381,12 +381,12 @@ With semantic theme tokens, the class names are self-documenting. Every develope
       align-self: flex-start;
     }`} />
 
-### Side-by-Side: Abstract Numbers vs Semantic Names
+### 比較: 抽象的な数値 vs セマンティックな名前
 
-The same UI elements sized two ways. On the left, abstract numeric tokens that could mean anything. On the right, semantic theme tokens that tell you exactly what they're for.
+同じ UI 要素を2つの方法でサイズ指定した比較です。左側は何を意味するか分からない抽象的な数値トークン、右側はそのサイズが何のためかを正確に伝えるセマンティックなテーマトークンです。
 
 <CssPreview client:load
-  title="Abstract Numbers vs Semantic Theme Tokens"
+  title="抽象的な数値 vs セマンティックテーマトークン"
   height={300}
   html={`    <div class="compare">
       <div class="compare__col">
@@ -524,12 +524,12 @@ The same UI elements sized two ways. On the left, abstract numeric tokens that c
       border-left: 3px solid hsl(142 50% 40%);
     }`} />
 
-### Tier 2 in Practice: Arbitrary Values for One-Offs
+### Tier 2 の実践: 一回限りの任意の値
 
-Component-specific sizing uses Tailwind's bracket syntax. These values stay in the component — they are not promoted to tokens because they have no meaning outside their context.
+コンポーネント固有のサイジングには Tailwind のブラケット構文を使います。これらの値はコンポーネント内にとどめます。コンテキスト外では意味を持たないため、トークンに昇格させません。
 
 <CssPreview client:load
-  title="Arbitrary Values for Component-Specific Sizing"
+  title="コンポーネント固有のサイジングに任意の値を使用"
   height={260}
   html={`    <div class="arb-demo">
       <div class="arb-demo__section">
@@ -667,11 +667,11 @@ Component-specific sizing uses Tailwind's bracket syntax. These values stay in t
       font-style: italic;
     }`} />
 
-## Tailwind CSS Integration
+## Tailwind CSS との統合
 
-In a Tailwind v4 project:
+Tailwind v4 プロジェクトでの使い方：
 
-**Tier 1** → `@theme` block with `--spacing-*` prefix (so they work with `w-*` and `h-*` utilities):
+**Tier 1** → `@theme` ブロックに `--spacing-*` プレフィックスを付けて定義します（`w-*` や `h-*` ユーティリティで使えるようにするため）：
 
 ```css
 @theme {
@@ -685,9 +685,9 @@ In a Tailwind v4 project:
 }
 ```
 
-Usage: `w-icon-md h-icon-md`, `w-avatar-sm h-avatar-sm`.
+使い方：`w-icon-md h-icon-md`、`w-avatar-sm h-avatar-sm`
 
-**Tier 2** → Tailwind's bracket syntax for one-offs:
+**Tier 2** → 一回限りの値には Tailwind のブラケット構文を使います：
 
 ```html
 <div class="w-[28px] h-[28px]">...</div>
@@ -695,45 +695,45 @@ Usage: `w-icon-md h-icon-md`, `w-avatar-sm h-avatar-sm`.
 <div class="grid grid-cols-[240px_1fr]">...</div>
 ```
 
-## Common AI Mistakes
+## AI がよくやるミス
 
-- **Re-adding the numeric spacing scale** — importing `--spacing-4: 16px`, `--spacing-8: 32px` etc. back into `@theme` defeats the tight token strategy; these are meaningless numbers
-- **Creating abstract size tokens** — `--size-sm`, `--size-md`, `--size-lg` with values like 16px, 32px, 64px are too generic; what is a "small size"? An icon? An avatar? A button?
-- **Using spacing tokens for element sizing** — `hsp-sm` is for horizontal padding/margins, not for icon width; different concepts, different tokens
-- **Adding a token for every unique dimension** — not every pixel value deserves a name; a calculated offset like `top-[calc(100%-2px)]` is a structural detail, not a design decision
-- **Porting Tailwind defaults "just in case"** — adding numeric spacing tokens without a design reason creates the unconstrained palette the tight strategy was designed to prevent; tokens should come from design decisions, not from anticipating future usage
+- **数値スペーシングスケールの再追加** — `--spacing-4: 16px`、`--spacing-8: 32px` などを `@theme` にインポートし直すと、タイトトークン戦略が台無しになります。意味のない数値でしかありません
+- **抽象的なサイズトークンの作成** — `--size-sm`、`--size-md`、`--size-lg` に 16px、32px、64px のような値を設定するのは汎用的すぎます。「小さいサイズ」とは何でしょうか？ アイコン？ アバター？ ボタン？
+- **スペーシングトークンを要素のサイジングに使用** — `hsp-sm` は水平方向の padding/margin 用であり、アイコンの幅用ではありません。異なる概念には異なるトークンを使います
+- **すべてのユニークな寸法にトークンを追加** — すべてのピクセル値が名前に値するわけではありません。`top-[calc(100%-2px)]` のような計算されたオフセットは構造的な詳細であり、デザイン判断ではありません
+- **Tailwind のデフォルトを「念のため」移植** — デザイン上の理由なく数値スペーシングトークンを追加すると、タイト戦略が防ごうとしていた制約のないパレットが生まれます。トークンはデザイン判断から来るべきであり、将来の使用を見越して作るものではありません
 
-## When to Use
+## 使い分け
 
-- **Any project using the tight token strategy** that needs to size elements (icons, avatars, cards, thumbnails)
-- **When AI agents build components** — they consistently reach for `h-4 w-4` which doesn't exist in tight token projects; this article explains the correct approach
-- **When the team debates adding numeric size tokens** — this article provides the reasoning for why not
+- **タイトトークン戦略を使用しているプロジェクト**で、要素のサイジング（アイコン、アバター、カード、サムネイル）が必要な場合
+- **AI エージェントがコンポーネントを構築する場合** — AI は一貫して `h-4 w-4` を使おうとしますが、タイトトークンプロジェクトではこれは存在しません。この記事が正しいアプローチを説明しています
+- **チームが数値サイズトークンの追加を議論している場合** — この記事がなぜ追加すべきでないかの根拠を提供します
 
-### Tailwind + Component-First vs General CSS
+### Tailwind + コンポーネントファースト vs 一般的な CSS
 
-The two-tier approach works the same way regardless of CSS methodology, but the mechanism for Tier 2 differs:
+2層アプローチは CSS 方法論に関係なく同じように機能しますが、Tier 2 のメカニズムが異なります：
 
-- **Tailwind + component-first** — Tier 2 values are Tailwind bracket syntax in JSX: `w-[28px]`, `grid-cols-[240px_1fr]`. The component file provides scoping. No CSS custom properties needed.
-- **General CSS (BEM, CSS Modules)** — Tier 2 values are component-scoped CSS custom properties: `--_button-width: 28px`, `--_grid-sidebar: 240px`. The underscore prefix (`--_`) signals local scope.
+- **Tailwind + コンポーネントファースト** — Tier 2 の値は JSX 内の Tailwind ブラケット構文：`w-[28px]`、`grid-cols-[240px_1fr]`。コンポーネントファイルがスコーピングを提供します。CSS カスタムプロパティは不要です。
+- **一般的な CSS（BEM、CSS Modules）** — Tier 2 の値はコンポーネントスコープの CSS カスタムプロパティ：`--_button-width: 28px`、`--_grid-sidebar: 240px`。アンダースコアプレフィックス（`--_`）がローカルスコープを示します。
 
-### Contrast with Other Token Strategies
+### 他のトークン戦略との比較
 
-Not every CSS property needs the same number of tiers:
+すべての CSS プロパティが同じ数の層を必要とするわけではありません：
 
-| Property | Tiers | Why |
+| プロパティ | 層数 | 理由 |
 | --- | --- | --- |
-| Colors | 3 (palette → theme → component) | Raw values have palette structure worth abstracting |
-| Font sizes | 3 (scale → theme → component) | Clear hierarchy from captions to headings |
-| Spacing | 2 (semantic axes hsp/vsp) | Consistent rhythm, but already semantic |
-| **Width/height** | **2 (theme → component)** | **No natural scale — semantic names only** |
+| カラー | 3（パレット → テーマ → コンポーネント） | 生の値にはパレット構造があり、抽象化する価値がある |
+| フォントサイズ | 3（スケール → テーマ → コンポーネント） | キャプションから見出しまで明確な階層がある |
+| スペーシング | 2（セマンティック軸 hsp/vsp） | 一貫したリズムがあり、すでにセマンティック |
+| **幅・高さ** | **2（テーマ → コンポーネント）** | **自然なスケールがない — セマンティックな名前のみ** |
 
-See also:
+関連記事：
 
-- [Three-Tier Color Strategy](../color/three-tier-color-strategy/) — Full three-tier architecture for colors
-- [Three-Tier Font-Size Strategy](../typography/three-tier-font-size-strategy/) — Three-tier architecture for font sizes
-- [Component Tokens & Arbitrary Values](./tight-token-strategy/component-tokens/) — General framework for when to use tokens vs arbitrary values
+- [3層カラー戦略](../color/three-tier-color-strategy/) — カラーの完全な3層アーキテクチャ
+- [3層フォントサイズ戦略](../typography/three-tier-font-size-strategy/) — フォントサイズの3層アーキテクチャ
+- [コンポーネントトークンと任意の値](./tight-token-strategy/component-tokens/) — トークンと任意の値の使い分けに関する一般的なフレームワーク
 
-## References
+## リファレンス
 
 - [Tailwind CSS v4 Theme Configuration](https://tailwindcss.com/docs/theme)
 - [Tailwind CSS v4 Arbitrary Values](https://tailwindcss.com/docs/adding-custom-styles#using-arbitrary-values)
