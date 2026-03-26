@@ -1,31 +1,31 @@
 ---
-title: Form Control Styling
-sidebar_position: 7
+title: フォームコントロールのスタイリング
+sidebar_position: 1
 ---
 
 import CssPreview from '@/components/CssPreview';
 
-## The Problem
+## 問題
 
-Form elements — checkboxes, radio buttons, range sliders, textareas — have historically been the hardest parts of the web to style. Their rendering is deeply tied to the operating system, and browsers give CSS limited control over their appearance. As a result, developers reach for JavaScript libraries, custom toggle components built from `<div>` elements, or complex CSS hacks involving hidden inputs with sibling selectors. These workarounds bloat the bundle, break native accessibility, and diverge from the underlying HTML semantics.
+フォーム要素 — チェックボックス、ラジオボタン、レンジスライダー、テキストエリア — は、歴史的にウェブで最もスタイリングが難しい要素です。レンダリングはオペレーティングシステムに深く結びついており、ブラウザはCSSによる見た目の制御を制限しています。そのため、開発者はJavaScriptライブラリ、`<div>` 要素で構築されたカスタムトグルコンポーネント、または隠しinputと兄弟セレクタを使った複雑なCSSハックに頼ることになります。これらの回避策はバンドルを肥大化させ、ネイティブのアクセシビリティを壊し、本来のHTMLセマンティクスから逸脱してしまいます。
 
-Modern CSS now provides native properties to brand and customize form controls without replacing them.
+モダンCSSは、フォームコントロールを置き換えることなくブランディングやカスタマイズを行うネイティブプロパティを提供しています。
 
-## The Solution
+## 解決方法
 
-Four modern CSS properties replace most JavaScript-based form customization:
+4つのモダンCSSプロパティが、JavaScriptベースのフォームカスタマイズの大部分を置き換えます：
 
-- **`accent-color`** — Themes native checkboxes, radios, range sliders, and progress bars with a single declaration. The browser handles contrast automatically.
-- **`appearance: none`** — Strips the OS-native rendering of a form control, giving you a blank canvas to style from scratch with CSS.
-- **`field-sizing: content`** — Makes textareas and inputs automatically size to their content, eliminating the need for JavaScript auto-resize scripts.
-- **`caret-color`** — Changes the color of the blinking text cursor in inputs and textareas, providing a subtle branding touch.
+- **`accent-color`** — 単一の宣言でネイティブのチェックボックス、ラジオボタン、レンジスライダー、プログレスバーにテーマを適用します。ブラウザがコントラストを自動的に処理します。
+- **`appearance: none`** — フォームコントロールのOSネイティブレンダリングを除去し、CSSでゼロからスタイリングできる白紙の状態にします。
+- **`field-sizing: content`** — テキストエリアやinputをコンテンツに合わせて自動サイズ調整させ、JavaScriptの自動リサイズスクリプトを不要にします。
+- **`caret-color`** — inputやテキストエリアの点滅するテキストカーソルの色を変更し、ブランディングの繊細なアクセントになります。
 
-### Core Principles
+### 基本原則
 
-Use `accent-color` as your first tool — it requires zero custom CSS beyond a single property and preserves full accessibility. Only reach for `appearance: none` when you need a design that goes beyond what `accent-color` can express. When you do use `appearance: none`, always restore it inside `@media (forced-colors: active)` so the control remains visible in Windows High Contrast mode.
+最初のツールとして `accent-color` を使いましょう — 単一プロパティ以外のカスタムCSSが不要で、完全なアクセシビリティを維持します。`accent-color` で表現できないデザインが必要な場合にのみ `appearance: none` を使いましょう。`appearance: none` を使用する場合は、Windows High Contrastモードでコントロールが表示されるよう、必ず `@media (forced-colors: active)` 内で復元してください。
 
 <CssPreview client:load
-  title="accent-color on Native Controls"
+  title="ネイティブコントロールの accent-color"
   height={320}
   html={`
     <div class="accent-demo">
@@ -94,10 +94,10 @@ Use `accent-color` as your first tool — it requires zero custom CSS beyond a s
     }
     `} />
 
-One line of CSS — `accent-color: hsl(262 80% 50%)` — themes every native control in the container. The browser automatically adjusts the checkmark and radio dot colors for contrast against the accent background.
+たった1行のCSS — `accent-color: hsl(262 80% 50%)` — でコンテナ内のすべてのネイティブコントロールにテーマが適用されます。ブラウザがアクセントの背景に対してチェックマークやラジオドットの色を自動的にコントラスト調整します。
 
 <CssPreview client:load
-  title="Custom Checkbox with appearance: none"
+  title="appearance: none によるカスタムチェックボックス"
   height={200}
   html={`
     <div class="custom-checkbox-demo">
@@ -181,10 +181,10 @@ One line of CSS — `accent-color: hsl(262 80% 50%)` — themes every native con
     }
     `} />
 
-The `appearance: none` declaration strips the native checkbox rendering, then CSS rebuilds it: a border for the box, a `clip-path` polygon for the checkmark on `::before`, and `transform: scale()` for the animation between unchecked and checked states. The `@media (forced-colors: active)` block restores `appearance: auto` so the checkbox remains functional in Windows High Contrast mode.
+`appearance: none` 宣言はネイティブのチェックボックスレンダリングを除去し、CSSで再構築します：ボックスのボーダー、`::before` の `clip-path` ポリゴンでチェックマーク、チェック状態と非チェック状態のアニメーションに `transform: scale()` を使用します。`@media (forced-colors: active)` ブロックは `appearance: auto` を復元し、Windows High Contrastモードでチェックボックスが機能し続けるようにします。
 
 <CssPreview client:load
-  title="Custom Radio Buttons with Smooth Transitions"
+  title="スムーズなトランジション付きカスタムラジオボタン"
   height={200}
   html={`
     <fieldset class="custom-radio-demo">
@@ -277,10 +277,10 @@ The `appearance: none` declaration strips the native checkbox rendering, then CS
     }
     `} />
 
-Custom radios follow the same pattern as checkboxes: `appearance: none` strips the native rendering, a `::before` pseudo-element draws the inner dot, and `transform: scale()` smoothly animates the selection. The circular `border-radius: 50%` and smaller inner dot preserve the conventional radio button visual language so users immediately recognize the control.
+カスタムラジオボタンもチェックボックスと同じパターンに従います：`appearance: none` でネイティブレンダリングを除去し、`::before` 擬似要素で内側のドットを描画し、`transform: scale()` で選択をスムーズにアニメーションします。円形の `border-radius: 50%` と小さな内側のドットにより、従来のラジオボタンの視覚言語が保持され、ユーザーはコントロールをすぐに認識できます。
 
 <CssPreview client:load
-  title="Auto-Expanding Textarea with field-sizing"
+  title="field-sizing による自動拡張テキストエリア"
   height={280}
   html={`
     <div class="field-sizing-demo">
@@ -348,12 +348,12 @@ Custom radios follow the same pattern as checkboxes: `appearance: none` strips t
     }
     `} />
 
-The `field-sizing: content` property eliminates the need for JavaScript auto-resize libraries. The textarea expands as the user types and shrinks when content is removed. Use `min-height` and `max-height` to set bounds so the textarea does not collapse to a single line or grow to fill the entire page.
+`field-sizing: content` プロパティにより、JavaScriptの自動リサイズライブラリが不要になります。テキストエリアはユーザーが入力すると拡張し、コンテンツが削除されると縮小します。`min-height` と `max-height` で範囲を設定し、テキストエリアが1行に縮小したりページ全体を埋め尽くしたりしないようにしましょう。
 
-**Browser support note:** `field-sizing` is supported in Chrome 123+ and Edge 123+ (released March 2024). Firefox and Safari do not yet support it. Use it as a progressive enhancement — the textarea falls back to its default fixed size in unsupported browsers.
+**ブラウザサポートの注意：** `field-sizing` は Chrome 123+ と Edge 123+（2024年3月リリース）でサポートされています。Firefox と Safari はまだサポートしていません。プログレッシブエンハンスメントとして使用しましょう — 非対応ブラウザではテキストエリアがデフォルトの固定サイズにフォールバックします。
 
 <CssPreview client:load
-  title="Coordinated Form Theme"
+  title="統一されたフォームテーマ"
   height={400}
   html={`
     <form class="themed-form" onsubmit="return false">
@@ -488,11 +488,11 @@ The `field-sizing: content` property eliminates the need for JavaScript auto-res
     }
     `} />
 
-This form combines all four properties into a cohesive branded experience: `accent-color` themes the native checkboxes, `caret-color` matches the blinking cursor to the brand purple, and custom focus rings using `box-shadow` provide a consistent focus treatment across text inputs and textareas. The submit button follows the same color palette with proper `:hover`, `:focus-visible`, and `:active` states.
+このフォームは4つのプロパティすべてを組み合わせて統一されたブランド体験を実現しています：`accent-color` でネイティブチェックボックスにテーマを適用し、`caret-color` で点滅カーソルをブランドのパープルに合わせ、`box-shadow` を使用したカスタムフォーカスリングでテキスト入力とテキストエリア全体に一貫したフォーカス処理を提供します。送信ボタンも同じカラーパレットに従い、適切な `:hover`、`:focus-visible`、`:active` 状態を備えています。
 
-## Code Examples
+## コード例
 
-### Quick Branding with accent-color
+### accent-color による手軽なブランディング
 
 ```css
 form {
@@ -500,9 +500,9 @@ form {
 }
 ```
 
-This single line themes every checkbox, radio, range slider, and progress bar inside the form. No additional selectors needed.
+この1行でフォーム内のすべてのチェックボックス、ラジオボタン、レンジスライダー、プログレスバーにテーマが適用されます。追加のセレクタは不要です。
 
-### Custom Checkbox from Scratch
+### ゼロからのカスタムチェックボックス
 
 ```css
 .checkbox {
@@ -543,7 +543,7 @@ This single line themes every checkbox, radio, range slider, and progress bar in
 }
 ```
 
-### Auto-Sizing Textarea
+### 自動サイジングテキストエリア
 
 ```css
 .auto-textarea {
@@ -553,7 +553,7 @@ This single line themes every checkbox, radio, range slider, and progress bar in
 }
 ```
 
-### Coordinated Form Variables
+### 統一されたフォーム変数
 
 ```css
 .form {
@@ -571,23 +571,23 @@ This single line themes every checkbox, radio, range slider, and progress bar in
 }
 ```
 
-## Common AI Mistakes
+## AIがよくやるミス
 
-- **Replacing native controls with `<div>` elements**: Building fake checkboxes and radios from `<div>` and `<span>` instead of using `<input>` with `appearance: none`. The fake controls lack keyboard navigation, form submission, and screen reader semantics.
-- **Forgetting `@media (forced-colors: active)`**: Custom checkboxes and radios built with `appearance: none` become invisible in Windows High Contrast mode. Always restore `appearance: auto` inside a `forced-colors` media query.
-- **Using JavaScript for auto-expanding textareas**: Adding resize observers or input event listeners when `field-sizing: content` handles it natively (with graceful degradation).
-- **Overriding all form styles when `accent-color` suffices**: Writing dozens of lines of custom checkbox CSS when the design only needs a brand color applied to the native control.
-- **Not providing focus indicators on custom controls**: Stripping `appearance` without adding `:focus-visible` styles, leaving keyboard users with no visible focus state.
-- **Hardcoding colors instead of using CSS custom properties**: Making form theming inflexible by scattering color values throughout selectors instead of defining a single set of variables.
+- **ネイティブコントロールを `<div>` 要素で置き換える**：`<input>` に `appearance: none` を使う代わりに、`<div>` と `<span>` で偽のチェックボックスやラジオボタンを構築します。偽のコントロールはキーボードナビゲーション、フォーム送信、スクリーンリーダーのセマンティクスを欠いています。
+- **`@media (forced-colors: active)` を忘れる**：`appearance: none` で構築されたカスタムチェックボックスやラジオボタンは、Windows High Contrastモードで見えなくなります。`forced-colors` メディアクエリ内で常に `appearance: auto` を復元しましょう。
+- **自動拡張テキストエリアにJavaScriptを使用する**：`field-sizing: content` がネイティブで処理できる（グレースフルデグラデーション付き）のに、リサイズオブザーバーやinputイベントリスナーを追加します。
+- **`accent-color` で十分な場合にすべてのフォームスタイルをオーバーライドする**：ネイティブコントロールにブランドカラーを適用するだけで済むデザインに、数十行のカスタムチェックボックスCSSを書きます。
+- **カスタムコントロールにフォーカスインジケーターを提供しない**：`appearance` を除去しながら `:focus-visible` スタイルを追加せず、キーボードユーザーに視覚的フォーカス状態がなくなります。
+- **CSSカスタムプロパティの代わりに色をハードコードする**：変数の単一セットを定義する代わりに、セレクタ全体に色の値を散在させ、フォームテーマの柔軟性を失わせます。
 
-## When to Use
+## 使い分け
 
-- **`accent-color`**: When you need to brand native form controls and the design does not require a custom shape or layout. This is the right default choice.
-- **`appearance: none`**: When the design demands a fully custom checkbox, radio, or select appearance that `accent-color` cannot express. Always pair with `forced-colors` restoration.
-- **`field-sizing: content`**: When textareas or text inputs should grow with their content. Use as progressive enhancement with `min-height` / `max-height` bounds.
-- **`caret-color`**: When the blinking cursor should match the brand color in text inputs and textareas. A small detail that signals a polished design.
+- **`accent-color`**：ネイティブフォームコントロールにブランディングが必要で、デザインがカスタムの形状やレイアウトを要求しない場合に使います。これがデフォルトの正しい選択です。
+- **`appearance: none`**：`accent-color` では表現できない完全にカスタムなチェックボックス、ラジオボタン、セレクトの外観がデザインで求められる場合に使います。必ず `forced-colors` の復元とペアにしましょう。
+- **`field-sizing: content`**：テキストエリアやテキストinputがコンテンツに合わせて拡大すべき場合に使います。`min-height` / `max-height` の範囲を設定してプログレッシブエンハンスメントとして使用しましょう。
+- **`caret-color`**：テキストinputやテキストエリアの点滅カーソルをブランドカラーに合わせるべき場合に使います。洗練されたデザインを示す小さなディテールです。
 
-## References
+## 参考リンク
 
 - [accent-color — MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/accent-color)
 - [appearance — MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/appearance)

@@ -1,21 +1,21 @@
 ---
-title: View Transitions
-sidebar_position: 11
+title: ビュートランジション
+sidebar_position: 3
 ---
 
 import CssPreview from '@/components/CssPreview';
 
-## The Problem
+## 問題
 
-Creating smooth animated transitions between page states or during navigation has traditionally required complex JavaScript animation libraries, manual DOM manipulation, or framework-specific solutions like React Transition Group. Page navigations (both SPA and MPA) result in abrupt content swaps with no visual continuity. AI agents default to JavaScript-heavy animation approaches and almost never suggest the View Transitions API.
+ページの状態間やナビゲーション時にスムーズなアニメーショントランジションを作成するには、従来、複雑なJavaScriptアニメーションライブラリ、手動のDOM操作、またはReact Transition Groupのようなフレームワーク固有のソリューションが必要でした。ページナビゲーション（SPAとMPAの両方）では、視覚的な連続性のない唐突なコンテンツの切り替えが発生します。AIエージェントはJavaScriptに依存するアニメーションアプローチをデフォルトとし、View Transitions APIを提案することはほとんどありません。
 
-## The Solution
+## 解決方法
 
-The View Transitions API provides a native mechanism for creating animated transitions between DOM states. The browser captures a snapshot of the old state, applies the DOM update, then animates between old and new snapshots using CSS. For same-document (SPA) transitions, use `document.startViewTransition()`. For cross-document (MPA) transitions, use the `@view-transition` CSS at-rule to opt both pages in.
+View Transitions APIは、DOM状態間のアニメーショントランジションを作成するためのネイティブメカニズムを提供します。ブラウザが古い状態のスナップショットをキャプチャし、DOM更新を適用してから、CSSを使って古いスナップショットと新しいスナップショットの間をアニメーションします。同一ドキュメント（SPA）のトランジションには`document.startViewTransition()`を使用します。クロスドキュメント（MPA）のトランジションには`@view-transition` CSSアットルールを使って両方のページをオプトインします。
 
-## Code Examples
+## コード例
 
-### Same-Document View Transition (SPA)
+### 同一ドキュメントのView Transition（SPA）
 
 ```css
 /* Default crossfade animation — works with no extra CSS */
@@ -54,9 +54,9 @@ The View Transitions API provides a native mechanism for creating animated trans
 </script>
 ```
 
-### Named View Transitions for Element-Level Animation
+### 要素レベルのアニメーション用の名前付きView Transition
 
-Give specific elements their own transition by assigning a `view-transition-name`.
+`view-transition-name`を割り当てることで、特定の要素に独自のトランジションを持たせます。
 
 ```css
 .product-image {
@@ -87,9 +87,9 @@ Give specific elements their own transition by assigning a `view-transition-name
 }
 ```
 
-### Cross-Document View Transitions (MPA)
+### クロスドキュメントのView Transition（MPA）
 
-Opt both pages into the transition with the `@view-transition` at-rule.
+`@view-transition`アットルールで両方のページをトランジションにオプトインします。
 
 ```css
 /* Include this in BOTH the source and destination pages */
@@ -112,7 +112,7 @@ Opt both pages into the transition with the `@view-transition` at-rule.
 }
 ```
 
-### Slide Transition Between Pages
+### ページ間のスライドトランジション
 
 ```css
 @view-transition {
@@ -138,9 +138,9 @@ Opt both pages into the transition with the `@view-transition` at-rule.
 }
 ```
 
-### Using `view-transition-class` for Grouped Animations
+### `view-transition-class`によるグループアニメーション
 
-Apply the same animation to multiple named transitions without repeating CSS.
+CSSを繰り返すことなく、複数の名前付きトランジションに同じアニメーションを適用します。
 
 ```css
 .card-1 { view-transition-name: card-1; }
@@ -159,7 +159,7 @@ Apply the same animation to multiple named transitions without repeating CSS.
 }
 ```
 
-### Conditional Transitions with View Transition Types
+### View Transition Typesによる条件付きトランジション
 
 ```html
 <script>
@@ -201,7 +201,7 @@ Apply the same animation to multiple named transitions without repeating CSS.
 }
 ```
 
-### Respecting User Preferences
+### ユーザー設定の尊重
 
 ```css
 @media (prefers-reduced-motion: reduce) {
@@ -212,46 +212,46 @@ Apply the same animation to multiple named transitions without repeating CSS.
 }
 ```
 
-## Browser Support
+## ブラウザサポート
 
-### Same-Document View Transitions
+### 同一ドキュメントのView Transitions
 
 - Chrome 111+
 - Edge 111+
 - Safari 18+
-- Firefox 144+ (shipping October 2025 — part of Interop 2025)
+- Firefox 144+（2025年10月リリース — Interop 2025の一部）
 
-### Cross-Document View Transitions
+### クロスドキュメントのView Transitions
 
 - Chrome 126+
 - Edge 126+
 - Safari 18.2+
-- Firefox: not yet supported
+- Firefox：未サポート
 
-Same-document transitions have broad support. Cross-document transitions are supported in Chromium and Safari but not yet in Firefox. Always provide a fallback by checking for `document.startViewTransition` before calling it.
+同一ドキュメントのトランジションは幅広いサポートがあります。クロスドキュメントのトランジションはChromiumとSafariでサポートされていますが、Firefoxではまだサポートされていません。常に`document.startViewTransition`のサポートを確認してから呼び出すようにフォールバックを提供しましょう。
 
-## Common AI Mistakes
+## AIがよくやるミス
 
-- Using JavaScript animation libraries (GSAP, Framer Motion) for transitions that the View Transitions API handles natively
-- Not checking for `document.startViewTransition` support before calling it
-- Forgetting to add `@view-transition { navigation: auto; }` to **both** pages for cross-document transitions
-- Not assigning `view-transition-name` to shared elements that should animate independently from the page
-- Making `view-transition-name` values non-unique on the same page (each name must be unique at transition time)
-- Not respecting `prefers-reduced-motion` by disabling or shortening animations for users who prefer reduced motion
-- Over-animating: using view transitions for every small UI update instead of meaningful state changes
+- View Transitions APIがネイティブに処理できるトランジションに対して、JavaScriptアニメーションライブラリ（GSAP、Framer Motion）を使用する
+- `document.startViewTransition`のサポートを呼び出し前に確認しない
+- クロスドキュメントトランジションで**両方**のページに`@view-transition { navigation: auto; }`を追加し忘れる
+- ページとは独立してアニメーションすべき共有要素に`view-transition-name`を割り当てない
+- 同じページ上で`view-transition-name`の値をユニークにしない（トランジション時に各名前はユニークでなければならない）
+- `prefers-reduced-motion`を尊重しない — モーションの軽減を好むユーザーのためにアニメーションを無効化または短縮する
+- 過剰なアニメーション：意味のある状態変化ではなく、すべての小さなUI更新にView Transitionsを使用する
 
-## When to Use
+## 使い分け
 
-- Page-to-page navigation transitions (both SPA and MPA)
-- Content updates within a page (tab switches, list filtering, detail views)
-- Shared element transitions between list and detail views (e.g., product thumbnails)
-- Any state change where visual continuity helps the user understand what changed
-- Replacing complex JavaScript animation setups with native browser capabilities
+- ページ間のナビゲーショントランジション（SPAとMPAの両方）
+- ページ内のコンテンツ更新（タブ切り替え、リストフィルタリング、詳細ビュー）
+- リストビューと詳細ビュー間の共有要素トランジション（例：商品サムネイル）
+- 視覚的な連続性がユーザーの変化の理解を助けるあらゆる状態変化
+- 複雑なJavaScriptアニメーションの設定をネイティブブラウザ機能に置き換える
 
-## Live Previews
+## ライブプレビュー
 
 <CssPreview client:load
-  title="View Transition CSS Pattern (Static Example)"
+  title="View Transition CSSパターン（静的例）"
   html={`
     <div class="demo">
       <div class="page page-old">
@@ -353,7 +353,7 @@ Same-document transitions have broad support. Cross-document transitions are sup
     }
     `} />
 
-## References
+## 参考リンク
 
 - [View Transition API - MDN](https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API)
 - [Smooth transitions with the View Transition API - Chrome for Developers](https://developer.chrome.com/docs/web-platform/view-transitions)
