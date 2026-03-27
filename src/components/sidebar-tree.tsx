@@ -321,7 +321,7 @@ function CategoryNode({
 
   // Initial state must match server render (no sessionStorage access)
   // to avoid hydration mismatch. Stored state is restored in useEffect below.
-  const [open, setOpen] = useState(containsCurrent);
+  const [open, setOpen] = useState(containsCurrent ? true : !node.collapsed);
 
   // Restore open state from sessionStorage after hydration
   useEffect(() => {
