@@ -42,6 +42,7 @@ export const settings = {
   docHistory: true,
   aiAssistant: false,
   llmsTxt: true,
+  sidebarResizer: true as boolean,
   colorTweakPanel: false,
   versions: false as VersionConfig[] | false,
   footer: {
