@@ -27,6 +27,7 @@ export interface NavNode {
   hasPage: boolean;
   children: NavNode[];
   sortOrder?: "asc" | "desc";
+  collapsed?: boolean;
 }
 
 interface BuildNode {

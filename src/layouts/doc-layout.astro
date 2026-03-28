@@ -138,6 +138,20 @@ const contentTransition = {
         })();
       </script>
     )}
+    {settings.sidebarResizer && (
+      <script is:inline>
+        (function () {
+          function applySidebarWidth() {
+            try {
+              var w = localStorage.getItem("zudo-doc-sidebar-width");
+              if (w && !isNaN(Number(w))) document.documentElement.style.setProperty("--zd-sidebar-w", w + "px");
+            } catch (e) {}
+          }
+          applySidebarWidth();
+          document.addEventListener("astro:after-swap", applySidebarWidth);
+        })();
+      </script>
+    )}
     {settings.math && (
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.38/dist/katex.min.css" integrity="sha384-/L6i+LN3dyoaK2jYG5ZLh5u13cjdsPDcFOSNJeFBFa/KgVXR5kOfTdiN3ft1uMAq" crossorigin="anonymous" />
     )}
@@ -154,20 +168,21 @@ const contentTransition = {
       <Sidebar slot="sidebar" currentSlug={currentSlug} lang={lang} navSection={navSection} />
     </Header>
 
-    <div class="flex min-h-[calc(100vh-3.5rem-10rem)]">
-      {/* Desktop sidebar */}
-      {!hideSidebar && (
-        <aside
-          id="desktop-sidebar"
-          transition:persist={`sidebar-${lang}-${navSection ?? "default"}`}
-          class="hidden lg:block w-[clamp(14rem,20vw,22rem)] shrink-0 border-r border-muted"
-        >
-          <Sidebar currentSlug={currentSlug} lang={lang} navSection={navSection} />
-        </aside>
-      )}
+    {/* Desktop sidebar - fixed, outside content flow */}
+    {!hideSidebar && (
+      <aside
+        id="desktop-sidebar"
+        aria-label="Documentation sidebar"
+        transition:persist={`sidebar-${lang}-${navSection ?? "default"}`}
+        class="hidden lg:block fixed top-[3.5rem] left-0 z-30 w-[var(--zd-sidebar-w)] h-[calc(100vh-3.5rem)] overflow-y-auto bg-bg border-r border-muted"
+      >
+        <Sidebar currentSlug={currentSlug} lang={lang} navSection={navSection} />
+      </aside>
+    )}
 
-      {/* Content + TOC wrapper */}
-      <div class="flex-1 min-w-0 flex justify-center">
+    {/* Content margin wrapper - pushes content right of fixed sidebar */}
+    <div class:list={[!hideSidebar && "lg:ml-[var(--zd-sidebar-w)]"]}>
+      <div class="flex min-h-[calc(100vh-3.5rem)] justify-center">
         <div class:list={[
           "flex w-full gap-[clamp(1.5rem,3vw,4rem)]",
           hideSidebar ? "max-w-[80rem]" : "max-w-[clamp(50rem,75vw,90rem)]",
@@ -198,10 +213,10 @@ const contentTransition = {
           {!hideToc && <Toc headings={headings} client:load />}
         </div>
       </div>
+      <Footer lang={lang} />
     </div>
     {settings.aiAssistant && <AiChatModal basePath={withBase("/")} client:load />}
     {settings.colorTweakPanel && <ColorTweakPanel client:only="react" />}
-    <Footer lang={lang} />
     <CodeBlockEnhancer />
     <TabsInit />
     {settings.mermaid && <MermaidInit />}
@@ -218,5 +233,100 @@ const contentTransition = {
         if (el) el.scrollTop = _sidebarScrollTop;
       });
     </script>
+    {settings.sidebarResizer && (
+      <script>
+        function initSidebarResizer() {
+          const sidebar = document.getElementById("desktop-sidebar");
+          if (!sidebar || sidebar.querySelector("[data-sidebar-resizer]")) return;
+
+          const handle = document.createElement("div");
+          handle.setAttribute("data-sidebar-resizer", "");
+          Object.assign(handle.style, {
+            position: "absolute",
+            top: "0",
+            right: "0",
+            width: "6px",
+            height: "100%",
+            cursor: "col-resize",
+            zIndex: "10",
+            transition: "background 0.15s",
+          });
+
+          handle.addEventListener("mouseenter", () => {
+            if (!dragging) handle.style.background = "var(--zd-accent, rgba(128,128,128,0.3))";
+          });
+          handle.addEventListener("mouseleave", () => {
+            if (!dragging) handle.style.background = "";
+          });
+
+          let dragging = false;
+
+          handle.addEventListener("pointerdown", (e: PointerEvent) => {
+            e.preventDefault();
+            handle.setPointerCapture(e.pointerId);
+            dragging = true;
+            handle.style.background = "var(--zd-accent, rgba(128,128,128,0.3))";
+            document.documentElement.style.cursor = "col-resize";
+            document.documentElement.style.userSelect = "none";
+
+            const ghost = document.createElement("div");
+            Object.assign(ghost.style, {
+              position: "fixed",
+              top: "0",
+              width: "2px",
+              height: "100vh",
+              background: "var(--zd-accent, rgba(128,128,128,0.5))",
+              pointerEvents: "none",
+              zIndex: "9999",
+            });
+            const sidebarRect = sidebar!.getBoundingClientRect();
+            const sidebarLeft = sidebarRect.left;
+            ghost.style.left = (sidebarLeft + sidebarRect.width) + "px";
+            document.body.appendChild(ghost);
+            let targetWidth = 0;
+
+            const onMove = (ev: PointerEvent) => {
+              targetWidth = Math.max(192, Math.min(448, ev.clientX - sidebarLeft));
+              ghost.style.left = (sidebarLeft + targetWidth) + "px";
+            };
+
+            const cleanup = () => {
+              dragging = false;
+              handle.style.background = "";
+              document.documentElement.style.cursor = "";
+              document.documentElement.style.userSelect = "";
+              ghost.remove();
+              handle.removeEventListener("pointermove", onMove);
+              handle.removeEventListener("pointerup", onUp);
+              handle.removeEventListener("pointercancel", onCancel);
+              handle.removeEventListener("lostpointercapture", onCancel);
+            };
+
+            const onUp = (ev: PointerEvent) => {
+              handle.releasePointerCapture(ev.pointerId);
+              cleanup();
+              if (targetWidth > 0) {
+                document.documentElement.style.setProperty("--zd-sidebar-w", targetWidth + "px");
+                try { localStorage.setItem("zudo-doc-sidebar-width", String(Math.round(targetWidth))); } catch (e) {}
+              }
+            };
+
+            const onCancel = () => {
+              cleanup();
+            };
+
+            handle.addEventListener("pointermove", onMove);
+            handle.addEventListener("pointerup", onUp);
+            handle.addEventListener("pointercancel", onCancel);
+            handle.addEventListener("lostpointercapture", onCancel);
+          });
+
+          sidebar.appendChild(handle);
+        }
+
+        initSidebarResizer();
+        document.addEventListener("astro:after-swap", initSidebarResizer);
+      </script>
+    )}
   </body>
 </html>

@@ -46,19 +46,18 @@ function resolveItem(
   lang: Locale,
 ): NavNode[] {
   if (typeof item === "string") {
-    // String shorthand = doc reference
+    // String shorthand = doc reference (always rendered as leaf, children stripped)
     const node = findNode(tree, item);
-    return node ? [node] : [];
+    return node ? [{ ...node, children: [] }] : [];
   }
 
   switch (item.type) {
     case "doc": {
       const node = findNode(tree, item.id);
       if (!node) return [];
-      if (item.label) {
-        return [{ ...node, label: item.label }];
-      }
-      return [node];
+      // Doc references always render as leaves — strip children so they
+      // don't duplicate structure that the explicit config already defines.
+      return [{ ...node, children: [], ...(item.label ? { label: item.label } : {}) }];
     }
     case "link": {
       return [
@@ -86,6 +85,7 @@ function resolveItem(
           href: undefined,
           children,
           sortOrder: item.sortOrder,
+          collapsed: item.collapsed,
         },
       ];
     }
