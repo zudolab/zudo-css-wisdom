@@ -70,7 +70,7 @@ export const settings = {
         ],
       },
     ],
-    copyright: `Copyright © ${new Date().getFullYear()} <a href="https://x.com/Takazudo">Takazudo</a>. Built with <a href="https://takazudomodular.com/pj/zudo-doc">zudo-doc</a>.`,
+    copyright: `Copyright © ${new Date().getFullYear()} <a href="https://x.com/Takazudo">Takazudo</a>. Built with <a href="https://takazudomodular.com/pj/zudo-doc">zudo-doc</a>. Enjoy synth on <a href="https://takazudomodular.com/">Takazudo Modular</a>.`,
   } satisfies FooterConfig as FooterConfig | false,
   htmlPreview: false as HtmlPreviewConfig | false,
   claudeResources: { claudeDir: ".claude" } as { claudeDir: string; projectRoot?: string } | false,
