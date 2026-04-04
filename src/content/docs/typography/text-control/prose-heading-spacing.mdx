@@ -130,7 +130,7 @@ The flow utility uses the lobotomized owl selector (`* + *`) scoped to a contain
 .prose :where(h4) { --flow-space: 1.5em; }
 
 /* Consecutive headings: tighten spacing */
-.prose :where(h2, h3, h4, h5) + :where(h2, h3, h4, h5, h6) {
+.prose :where(h2, h3, h4, h5, h6) + :where(h2, h3, h4, h5, h6) {
   --flow-space: 0.5em;
 }
 
@@ -362,6 +362,8 @@ This targets the **first** heading in a consecutive pair and reduces its bottom 
 
 This approach is precise — it only adjusts spacing between heading pairs, leaving heading-to-content spacing untouched. Browser support is universal in modern browsers (Chrome 105+, Firefox 121+, Safari 15.4+).
 
+The trade-off: this strategy still depends on both headings having their own margins (top and bottom). In flex or grid containers where margins do not collapse, the gap between consecutive headings remains larger than in block flow. Use the flow utility (Strategy 1) or the Tailwind style (Strategy 2) when the prose container may be a flex or grid column.
+
 <CssPreview client:load
   title=":has() — Reduce Bottom Margin When Heading Follows"
   html={`
@@ -556,7 +558,7 @@ A production prose container can combine the flow utility with `:has()` for maxi
 }
 
 /* Consecutive headings: tight grouping */
-.prose :where(h2, h3, h4, h5) + :where(h2, h3, h4, h5, h6) {
+.prose :where(h2, h3, h4, h5, h6) + :where(h2, h3, h4, h5, h6) {
   --flow-space: 0.5em;
 }
 
@@ -597,7 +599,7 @@ Use when adopting Tailwind's `@tailwindcss/typography` plugin or building a simi
 
 ### `:has()` Selector Approach
 
-Use as a targeted fix on top of existing heading margins. Particularly useful when retrofitting spacing to an existing stylesheet without restructuring the margin strategy. Does not require adopting the flow utility pattern.
+Use as a targeted fix on top of existing heading margins in block flow containers. Particularly useful when retrofitting spacing to an existing stylesheet without restructuring the margin strategy. Does not require adopting the flow utility pattern. Avoid in flex or grid containers where margins do not collapse — the gap will remain larger than expected.
 
 ### Explicit Pair Rules
 
