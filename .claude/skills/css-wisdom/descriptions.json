@@ -16,6 +16,7 @@
   "typography/fonts/font-loading-strategies.mdx": "FOIT/FOUT, font-display, preload, fallback metrics",
   "typography/fonts/variable-fonts.mdx": "Single file for all weights/widths, font-variation-settings",
   "typography/text-control/vertical-rhythm.mdx": "Consistent spacing with a baseline unit",
+  "typography/text-control/prose-heading-spacing.mdx": "Consecutive heading spacing fix, flow utility, heading + * reset, :has() approach",
   "typography/text-control/text-wrap-balance-pretty.mdx": "text-wrap: balance for headings, pretty for orphan prevention",
   "typography/fonts/japanese-font-family.mdx": "Japanese font stack, Noto Sans JP, system fonts for CJK",
   "typography/fonts/noto-sans-webfont-guide.mdx": "Loading Noto Sans JP as webfont, subsetting, performance",
