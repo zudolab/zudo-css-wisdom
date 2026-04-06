@@ -4,13 +4,14 @@ CSS best practices documentation site, built with zudo-doc (Astro 5, MDX, Tailwi
 
 ## Commands
 
+Package manager: **pnpm** (Node.js >= 20).
+
 ```bash
 pnpm dev              # Dev server → http://css-bp.localhost:8811
 pnpm build            # Production build → dist/
 pnpm preview          # Preview built site
 pnpm check            # Astro type checking
-pnpm format:md        # Format MDX files
-pnpm b4push           # Pre-push validation (format + typecheck + build + link check)
+pnpm b4push           # Pre-push validation (typecheck + build + link check)
 ```
 
 ## Content Structure
@@ -35,7 +36,6 @@ Top-level directories under `src/content/docs/`. Directories with header nav ent
 
 Auto-generated directories (no header nav entry):
 
-- `claude/` - Claude Code integration docs
 - `inbox/` - Draft/work-in-progress articles (skipped by css-wisdom skill)
 
 ## Writing Docs
@@ -145,8 +145,7 @@ Adding a new header nav item requires editing `settings.ts`.
 4. Include CssPreview demos to illustrate techniques
 5. Create the matching Japanese file under `src/content/docs-ja/` with the same path
 6. Keep code blocks and `<CssPreview>` blocks identical -- only translate prose
-7. Run `pnpm format:md` to format the MDX files
-8. Run `pnpm build` to verify the site builds correctly
+7. Run `pnpm build` to verify the site builds correctly
 
 ### Adding a New Category
 
@@ -176,13 +175,11 @@ Uses a 16-color palette with OKLCH orange accent (`oklch(55.5% 0.163 48.998)`).
 
 The `css-wisdom` skill (`.claude/skills/css-wisdom/SKILL.md`) is **generated** by `pnpm generate:css-wisdom` (runs `scripts/generate-css-wisdom.js`). It is gitignored -- do NOT track it in git or edit it directly. To update the skill content, edit the generator script and re-run `pnpm generate:css-wisdom`. Add descriptions for new articles to `.claude/skills/css-wisdom/descriptions.json`.
 
-The skill supports `-u`/`--update` mode for adding or updating documentation articles.
-
 ## Claude Code Skills
 
 This repo manages zcss-specific Claude Code skills in `.claude/skills/`:
 
-- **`css-wisdom`** — Generated topic index of all CSS articles. Symlinked to `~/.claude/skills/css-wisdom` so it's available globally.
+- **`css-wisdom`** — Generated topic index of all CSS articles. Symlinked to `~/.claude/skills/css-wisdom` so it's available globally. Supports `-u`/`--update` mode.
 - **`l-writing`** — Writing and formatting rules for MDX articles. **Before writing or editing docs, invoke `/l-writing`.**
 - **`l-handle-deep-article`** — Guide for converting flat articles into deep articles with sub-pages. Local to this repo.
 - **`l-demo-component`** — Guide for CssPreview component usage and `defaultOpen` prop conventions. Local to this repo.
@@ -192,6 +189,10 @@ This repo manages zcss-specific Claude Code skills in `.claude/skills/`:
 ### Agents
 
 - **`ja-translator`** — Subagent for translating MDX docs from English to Japanese.
+
+### Translation Workflow
+
+After editing or creating an English doc, translate the Japanese counterpart using `/l-translate`. After editing a Japanese doc, update the English counterpart similarly.
 
 ## Site Config
 
