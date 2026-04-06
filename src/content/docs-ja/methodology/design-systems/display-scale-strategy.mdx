@@ -203,7 +203,7 @@ window.addEventListener("wheel", (e) => {
       align-items: center;
     }
     .scale-demo__badge {
-      font-size: 0.65rem;
+      font-size: 0.75rem;
       font-weight: 700;
       color: hsl(221 83% 53%);
       background: hsl(210 40% 96%);
@@ -272,7 +272,7 @@ window.addEventListener("wheel", (e) => {
   height={300}
   html={`    <div class="fixed-demo">
       <div class="fixed-demo__section">
-        <div class="fixed-demo__label">--display-scale でスケーリングされる値</div>
+        <div class="fixed-demo__label">Scales with --display-scale</div>
         <div class="fixed-demo__items">
           <div class="fixed-demo__item">
             <div class="fixed-demo__bar" style="width: 40px; height: 8px; background: hsl(221 83% 53%)"></div>
@@ -293,23 +293,23 @@ window.addEventListener("wheel", (e) => {
         </div>
       </div>
       <div class="fixed-demo__section">
-        <div class="fixed-demo__label fixed-demo__label--fixed">固定のままの値（スケーリングされない）</div>
+        <div class="fixed-demo__label fixed-demo__label--fixed">Stays fixed (not scaled)</div>
         <div class="fixed-demo__items">
           <div class="fixed-demo__item">
             <div class="fixed-demo__bar" style="width: 40px; height: 1px; background: hsl(215 16% 55%)"></div>
-            <span>1px 区切り線 — 常にシャープ</span>
+            <span>1px dividers — always crisp</span>
           </div>
           <div class="fixed-demo__item">
             <div class="fixed-demo__bar" style="width: 20px; height: 20px; border: 1px solid hsl(215 16% 55%); border-radius: 4px"></div>
-            <span>border-radius — サイズではなくスタイル</span>
+            <span>border-radius — style, not size</span>
           </div>
           <div class="fixed-demo__item">
             <div class="fixed-demo__bar" style="width: 20px; height: 20px; border: 1px solid hsl(215 16% 55%)"></div>
-            <span>border-width — 細いまま維持</span>
+            <span>border-width — stays thin</span>
           </div>
           <div class="fixed-demo__item">
-            <div class="fixed-demo__bar" style="width: 40px; height: 20px; background: hsla(0, 0%, 0%, 0.5); border-radius: 3px"></div>
-            <span>overlay opacity — 知覚に基づく</span>
+            <div class="fixed-demo__bar" style="width: 40px; height: 20px; background: hsl(0 0% 0% / 0.5); border-radius: 3px"></div>
+            <span>overlay opacity — perception</span>
           </div>
         </div>
       </div>
@@ -328,7 +328,7 @@ window.addEventListener("wheel", (e) => {
       gap: 0.5rem;
     }
     .fixed-demo__label {
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -346,7 +346,7 @@ window.addEventListener("wheel", (e) => {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 0.68rem;
+      font-size: 0.75rem;
       color: hsl(215 25% 35%);
     }
     .fixed-demo__bar {
@@ -436,4 +436,4 @@ window.addEventListener("wheel", (e) => {
 
 - [CSS `calc()` — MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/calc)
 - [CSS Custom Properties — MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties)
-- [Tauri WebView2 Zoom Behavior](https://tauri.app/)
+- [Tauri — Build Desktop Apps with Web Technology](https://tauri.app/)
