@@ -23,7 +23,7 @@ export const settings = {
     darkScheme: "Default Dark",
     respectPrefersColorScheme: true,
   } as ColorModeConfig | false,
-  siteName: "zudo-css",
+  siteName: "zudo-css-wisdom",
   siteDescription: "Pragmatic CSS knowledge for AI" as string,
   base: "/pj/zcss/",
   docsDir: "src/content/docs",
