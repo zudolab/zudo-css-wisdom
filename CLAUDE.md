@@ -1,71 +1,74 @@
 # zcss — zudo-css
 
-Documentation site teaching CSS best practices, built with Astro 5, MDX, Tailwind CSS v4, and React islands (zudo-doc framework).
+CSS best practices documentation site, built with zudo-doc (Astro 5, MDX, Tailwind CSS v4).
 
-## Project Structure
-
-```
-src/content/docs/       # MDX articles by category (English)
-src/content/docs-ja/    # Japanese locale articles
-src/components/         # CssPreview, PreviewBase, TailwindPreview, etc.
-src/config/             # Settings, color schemes, sidebars, i18n
-src/layouts/            # Astro layouts
-src/pages/              # Astro page routes
-src/plugins/            # Rehype plugins
-src/integrations/       # Astro integrations (search, doc-history, sitemap)
-src/styles/             # Global CSS (Tailwind v4 + design tokens)
-src/utils/              # Utility functions
-public/                 # Static assets
-lefthook.yml            # Git hooks (pre-commit: format, pre-push: quality checks)
-.claude/skills/         # Claude Code skills managed in this repo
-```
-
-## Development
-
-Package manager: **pnpm** (Node.js >= 20).
+## Commands
 
 ```bash
-pnpm install && pnpm dev     # Dev server → http://css-bp.localhost:8811
-pnpm build                   # Production build → dist/
-pnpm preview                 # Preview build
-pnpm check                   # Astro type checking
+pnpm dev              # Dev server → http://css-bp.localhost:8811
+pnpm build            # Production build → dist/
+pnpm preview          # Preview built site
+pnpm check            # Astro type checking
+pnpm format:md        # Format MDX files
+pnpm b4push           # Pre-push validation (format + typecheck + build + link check)
 ```
 
-## Tech Stack
+## Content Structure
 
-- **Astro 5** — static site generator with Content Collections
-- **MDX** — via `@astrojs/mdx`, content in `src/content/docs/`
-- **Tailwind CSS v4** — via `@tailwindcss/vite`
-- **React 19** — for interactive islands only (TOC, sidebar, color scheme picker)
-- **Shiki** — built-in code highlighting with dual-theme support
+- English (default): `src/content/docs/` -> `/docs/...`
+- Japanese: `src/content/docs-ja/` -> `/ja/docs/...`
+- Japanese docs should mirror the English directory structure
 
-## Key Directories
+**Bilingual rule**: When creating or updating any doc page, ALWAYS update both the English (`docs/`) and Japanese (`docs-ja/`) versions in the same PR. Keep code blocks and `<CssPreview>` blocks identical between languages -- only translate surrounding prose. If a Japanese version does not yet exist, create it.
 
-```
-src/
-├── components/          # Astro + React components
-│   └── admonitions/     # Note, Tip, Info, Warning, Danger
-├── config/              # Settings, color schemes
-├── content/
-│   ├── docs/            # English MDX content
-│   └── docs-ja/         # Japanese MDX content
-├── hooks/               # React hooks (scroll spy)
-├── layouts/             # Astro layouts (doc-layout)
-├── pages/               # File-based routing
-│   ├── docs/[...slug]   # English doc routes
-│   └── ja/docs/[...slug] # Japanese doc routes
-├── plugins/             # Rehype plugins
-├── integrations/        # Astro integrations (search, history, sitemap)
-└── styles/
-    └── global.css       # Design tokens (@theme) & Tailwind config
-```
+## Content Categories
 
-## Article Files
+Top-level directories under `src/content/docs/`. Directories with header nav entries are mapped via `categoryMatch` in `src/config/settings.ts`:
 
-- Format: MDX with YAML frontmatter (`sidebar_position`)
-- Location: `src/content/docs/<category>/`
-- File naming: **kebab-case** (e.g., `centering-techniques.mdx`)
-- Categories: layout, typography, color, visual, responsive, interactive, methodology, inbox, claude (auto-generated)
+- `overview/` - What is zudo-css, css-wisdom skill docs
+- `layout/` - Flexbox, Grid, positioning, centering, sizing, specialized layouts
+- `typography/` - Font sizing, fonts, text control
+- `styling/` - Color, effects, shadows and borders
+- `responsive/` - Container queries, fluid design, media queries, responsive patterns
+- `interactive/` - Forms, scroll, selectors, states and transitions
+- `methodology/` - Architecture (BEM, cascade layers, CSS modules), design systems
+
+Auto-generated directories (no header nav entry):
+
+- `claude/` - Claude Code integration docs
+- `inbox/` - Draft/work-in-progress articles (skipped by css-wisdom skill)
+
+## Writing Docs
+
+All documentation files use `.mdx` format with YAML frontmatter.
+
+### Frontmatter Fields
+
+Schema defined in `src/content.config.ts`:
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `title` | string | Yes | Page title, rendered as the page h1 |
+| `description` | string | No | Subtitle displayed below the title |
+| `sidebar_position` | number | No | Sort order within category (lower = higher). Always set this for predictable ordering |
+| `sidebar_label` | string | No | Custom text for sidebar display (overrides `title`) |
+| `tags` | string[] | No | Cross-category grouping tags |
+| `draft` | boolean | No | Exclude from build entirely |
+| `unlisted` | boolean | No | Built but noindexed, hidden from sidebar/nav |
+| `hide_sidebar` | boolean | No | Hide the left sidebar, center content |
+| `hide_toc` | boolean | No | Hide the right-side table of contents |
+| `standalone` | boolean | No | Hidden from sidebar nav but still indexed |
+| `slug` | string | No | Custom URL slug override |
+| `generated` | boolean | No | Build-time generated content (skip translation) |
+| `search_exclude` | boolean | No | Exclude from search results |
+| `pagination_next` | string/null | No | Override next page link (null to hide) |
+| `pagination_prev` | string/null | No | Override prev page link (null to hide) |
+
+### Content Rules
+
+- **No h1 in content**: The frontmatter `title` is automatically rendered as the page h1. Start your content with `## h2` headings. Do not write `# h1` in the MDX body.
+- **Always set `sidebar_position`**: Without it, pages sort alphabetically which is unpredictable. Use integers starting from 1.
+- **Kebab-case file names**: Use `my-article.mdx`, not `myArticle.mdx` or `my_article.mdx`.
 
 ### Article Structure
 
@@ -75,6 +78,25 @@ Follow this pattern for all articles:
 2. `## The Solution` — recommended approach with CssPreview demos
 3. More sections with demos as needed
 4. `## When to Use` — summary of when this technique applies
+
+### Linking Between Docs
+
+Use relative file paths with the `.mdx` extension:
+
+```markdown
+[Link text](./sibling-page.mdx)
+[Link text](../other-category/page.mdx)
+[Link text](../other-category/page.mdx#anchor)
+```
+
+The remark plugin resolves these during build. External links use standard URLs.
+
+### MDX Components
+
+Available globally in MDX without imports:
+
+- `<Note>`, `<Tip>`, `<Info>`, `<Warning>`, `<Danger>` — Admonitions (each accepts optional `title` prop)
+- `<CssPreview>` — Interactive CSS preview with code display (renders in iframe)
 
 ### CssPreview Demos
 
@@ -94,6 +116,46 @@ Key details:
 - Minimum font size: 0.75rem / 12px for labels
 - **Template literal indentation**: Always indent `css={}` and `html={}` content by at least 2 spaces. The `dedent()` utility strips common leading whitespace before displaying code in the panel. Content at column 0 produces unindented code display.
 
+## Navigation Structure
+
+Navigation is filesystem-driven. Directory structure directly becomes sidebar navigation.
+
+### Sidebar Ordering
+
+- Pages are ordered by `sidebar_position` (ascending). Without it, alphabetical order is used.
+- Category index pages (`index.mdx`) control category position via their own `sidebar_position`.
+
+### Header Navigation
+
+Defined in `src/config/settings.ts` via `headerNav`. Each item maps to a top-level content directory via `categoryMatch`:
+
+```typescript
+{ label: "Layout", path: "/docs/layout", categoryMatch: "layout" }
+```
+
+Adding a new header nav item requires editing `settings.ts`.
+
+## Content Creation Workflow
+
+### Adding a New Article
+
+1. Create the English `.mdx` file in the appropriate category under `src/content/docs/`
+2. Add frontmatter with at least `title` and `sidebar_position`
+3. Write content starting with `## h2` headings (not `# h1`)
+4. Include CssPreview demos to illustrate techniques
+5. Create the matching Japanese file under `src/content/docs-ja/` with the same path
+6. Keep code blocks and `<CssPreview>` blocks identical -- only translate prose
+7. Run `pnpm format:md` to format the MDX files
+8. Run `pnpm build` to verify the site builds correctly
+
+### Adding a New Category
+
+1. Create the directory under `src/content/docs/` (kebab-case)
+2. Create `index.mdx` with `title`, `description`, and `sidebar_position`
+3. Add a `headerNav` entry in `src/config/settings.ts` with `categoryMatch` pointing to the directory name
+4. Mirror the directory structure under `src/content/docs-ja/`
+5. Run `pnpm build` to verify
+
 ## Design Token System
 
 Uses a 16-color palette with OKLCH orange accent (`oklch(55.5% 0.163 48.998)`).
@@ -110,16 +172,17 @@ Uses a 16-color palette with OKLCH orange accent (`oklch(55.5% 0.163 48.998)`).
 - Light: **ZCSS Light** (warm light theme with orange accents)
 - Configured in `src/config/settings.ts` and `src/config/color-schemes.ts`
 
-## Admonitions
+## Doc Skill (css-wisdom)
 
-Available in all MDX files without imports:
-`<Note>`, `<Tip>`, `<Info>`, `<Warning>`, `<Danger>` — each accepts optional `title` prop.
+The `css-wisdom` skill (`.claude/skills/css-wisdom/SKILL.md`) is **generated** by `pnpm generate:css-wisdom` (runs `scripts/generate-css-wisdom.js`). It is gitignored -- do NOT track it in git or edit it directly. To update the skill content, edit the generator script and re-run `pnpm generate:css-wisdom`. Add descriptions for new articles to `.claude/skills/css-wisdom/descriptions.json`.
+
+The skill supports `-u`/`--update` mode for adding or updating documentation articles.
 
 ## Claude Code Skills
 
 This repo manages zcss-specific Claude Code skills in `.claude/skills/`:
 
-- **`css-wisdom`** — Topic index of all CSS articles. Symlinked to `~/.claude/skills/css-wisdom` so it's available globally. **When adding or removing articles, run `pnpm generate:css-wisdom` to regenerate the topic index.** Add descriptions for new articles to `.claude/skills/css-wisdom/descriptions.json`.
+- **`css-wisdom`** — Generated topic index of all CSS articles. Symlinked to `~/.claude/skills/css-wisdom` so it's available globally.
 - **`l-writing`** — Writing and formatting rules for MDX articles. **Before writing or editing docs, invoke `/l-writing`.**
 - **`l-handle-deep-article`** — Guide for converting flat articles into deep articles with sub-pages. Local to this repo.
 - **`l-demo-component`** — Guide for CssPreview component usage and `defaultOpen` prop conventions. Local to this repo.
@@ -130,9 +193,17 @@ This repo manages zcss-specific Claude Code skills in `.claude/skills/`:
 
 - **`ja-translator`** — Subagent for translating MDX docs from English to Japanese.
 
-### Translation Workflow
+## Site Config
 
-After editing or creating an English doc, translate the Japanese counterpart using `/l-translate`. After editing a Japanese doc, update the English counterpart similarly.
+- Base path: `/pj/zcss/`
+- Settings: `src/config/settings.ts`
+
+## CI/CD
+
+- PR checks: typecheck + build + link check + Cloudflare Pages preview
+- Main deploy: build + Cloudflare Pages production + IFTTT notification
+- Preview deploy: branch-based Cloudflare Pages preview
+- Secrets: CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN, IFTTT_PROD_NOTIFY
 
 ## Safety Rules
 
