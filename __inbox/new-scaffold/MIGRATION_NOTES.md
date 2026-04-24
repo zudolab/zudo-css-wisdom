@@ -253,3 +253,139 @@ correct output. Logged here so they are not lost between sub-issues.
 build work in child agents. `pnpm install` succeeded and produced a clean
 lockfile, which is enough here. Full `pnpm build` in `__inbox/new-scaffold/`
 is the acceptance criterion for Sub #58 (manager-side verification).
+
+## Sub #57 — misc files ported (decisions log)
+
+This section captures the judgement calls made while porting the
+repo-level misc files. Written as decisions + rationale so Sub #58 /
+Sub #59 can adjust if any trade-off was wrong.
+
+### Verbatim copies (no decision needed)
+
+- `CLAUDE.md` — overwrites the scaffold's placeholder with zcss's real
+  project instructions (bilingual rule, content categories, CssPreview
+  conventions, Claude Code skill references).
+- `README.md` — zcss public README (bilingual JA/EN, tech stack, commands,
+  css-wisdom skill hint).
+- `public/favicon.ico`, `public/img/{logo.svg, ogp.png, social-card.jpg,
+  speed-lines.svg}` — the live-site static assets. `favicon.ico` in the
+  source repo is actually an SVG with an `.ico` name; copied as-is.
+- `.env.example` — AI chat config template (`AI_CHAT_MODE`,
+  `ANTHROPIC_API_KEY`).
+
+### Dotfiles (scaffold ships none of these, so zcss copies kept)
+
+- `.mdx-formatter.json` — `@takazudo/mdx-formatter` config. Ignores
+  multi-line JSX formatting for `CssPreview` and `TailwindPreview` so
+  demo content indentation isn't mangled.
+- `.prettierrc` — registers `prettier-plugin-astro` for `.astro` files.
+  Prettier itself is not in the new scaffold's devDependencies (scaffold
+  dropped prettier and vitest — see the version delta table above). Sub
+  #54 is expected to reintroduce prettier + this config still applies.
+- `.npmrc` — pnpm hardening:
+  - `strictDepBuilds=true` blocks all dependency lifecycle scripts by
+    default (defensive against supply-chain attacks).
+  - `ignoredBuilds[]=core-js`, `ignoredBuilds[]=core-js-pure` — these
+    packages' postinstall is just a donation banner; silencing the pnpm
+    warning without opening a hole.
+  - `package-manager-strict-version=false`, `trust-policy=permissive` —
+    cross-machine developer convenience.
+
+### `.gitignore` — merged, not replaced
+
+The scaffold shipped a 7-line `.gitignore` (`node_modules`, `dist`,
+`.astro`, `src-tauri/target`, `src-tauri/gen`). Merged zcss-specific
+project-root entries above the scaffold defaults:
+
+- Staging / worktree scratch: `__inbox/`, `worktrees/`
+- Unversioned data dirs: `src/data/`, `doc/`
+- Generated Claude skills (machine-specific absolute paths):
+  `.claude/skills/css-wisdom/SKILL.md`,
+  `.claude/skills/css-wisdom/docs`,
+  `.claude/skills/css-wisdom/docs-ja`,
+  `.claude/skills/zcss-wisdom/`
+- Build-time claude-resources docs: `src/content/docs/claude/`,
+  `claude-agents/`, `claude-md/`, `claude-skills/`
+
+**Not merged** (on purpose): the generic entries a modern Node project
+always wants — `.DS_Store`, `.env`, `.env*.local`, `*.log`, `.wrangler/`.
+These are scaffold's responsibility, not zcss-specific overrides. Filed
+upstream as **zudo-doc#402**. When the scaffolder starts shipping those,
+the zcss repo will inherit them automatically on the next re-scaffold.
+
+`git status` inside `__inbox/new-scaffold/` after `pnpm install` +
+`pnpm check` shows no untracked files, with the expected `--ignored`
+paths only: `node_modules/`, `.astro/`, `src/content/docs/claude-md/`,
+`src/content/docs/claude-skills/`, `src/content/docs/claude/`. Merge is
+working.
+
+### E2E — vitest, not Playwright
+
+Issue #57 titles the file bundle "playwright", but zcss's e2e suite is
+actually a vitest-based static OGP meta-tag check against the built
+`dist/` tree (no browser automation). Neither the scaffold nor the live
+zcss repo contains a `playwright.config.ts`. Decision tree resolved as
+follows:
+
+- Scaffold ships no `playwright.config.ts` → fall back to "copy both".
+- zcss has no `playwright.config.ts` to copy → copy the actual config
+  zcss uses (`vitest.config.ts`) alongside `e2e/ogp.test.ts`.
+
+Files ported:
+
+- `e2e/ogp.test.ts` — walks `dist/`, asserts every non-404 HTML page has
+  `og:title`, `og:type=website`, `og:url` and `og:image` on the
+  production domain (`takazudomodular.com`), `og:site_name`, and
+  `twitter:card=summary_large_image`.
+- `vitest.config.ts` — 8-line config pinning `test.include` to
+  `e2e/**/*.test.ts`.
+
+`vitest` itself is **not yet in `package.json`** — the scaffold dropped
+it per the Sub #48 version-delta table. Reintroducing vitest to
+devDependencies is Sub #54's lane (or a post-swap follow-up). `pnpm test`
+won't run until then; `pnpm check` already ignores e2e/ (astro check
+only scans the Astro import graph), so there is no check regression
+from copying these files into the scaffold without vitest installed.
+
+### `patches/astro@6.0.4.patch` — **DROPPED**
+
+The zcss repo carries a 980-byte pnpm patch that targets `astro@6.0.4`.
+The patch is a defensive two-line fallback for a Rollup module-ordering
+issue — when `astroFileToCompileMetadata.get(filename)` returns
+`undefined` during build, the patched code re-reads the parent `.astro`
+file from disk and compiles it as a fallback.
+
+Decision: **DROP** the patch entirely. Rationale:
+
+1. The patch pins the exact version `astro@6.0.4`. pnpm will refuse to
+   apply it against any other version; the scaffold is on `^5.18.0`, so
+   the patch is a dead file today.
+2. The scaffold's `package.json` carries no `pnpm.patchedDependencies`
+   block, so nothing references the file. There is no stale pointer to
+   clean up.
+3. The underlying Rollup ordering issue does not obviously reproduce on
+   Astro 5.18 (zcss's most recent Sub #48 install succeeded cleanly
+   without the patch).
+4. Keeping a commented-out `patches/` directory creates maintenance
+   confusion for future contributors.
+
+If the bug reappears on 5.18.x or when zudo-doc eventually re-bumps to
+Astro 6, the patch is trivially recoverable from git history on
+`base/zudo-doc-rebuild` (pre-swap commits) — re-target it against the
+version in use at that time, not `6.0.4`.
+
+### `pnpm check` status
+
+Ran `pnpm install --prefer-offline --ignore-workspace` and then
+`pnpm check` inside `__inbox/new-scaffold/` after all Sub #57 file
+additions. Result:
+
+- **16 errors, 0 warnings, 6 hints** — identical to the pre-Sub #57
+  baseline. All 16 errors are scaffold-internal: `settings.ts` in the
+  scaffold lacks `tagPlacement`, `tagVocabulary`, `tagGovernance`,
+  `frontmatterPreview`, `docsSubdir`, etc., which are zcss site
+  features that Sub #49 (settings) will restore.
+- No error originates from any file ported in Sub #57. `e2e/ogp.test.ts`
+  is outside the Astro import graph and is not scanned by astro check.
+- Sub #58 is the right gate for "check passes cleanly" — it runs after
+  #49 + #54 have restored settings and scripts.
