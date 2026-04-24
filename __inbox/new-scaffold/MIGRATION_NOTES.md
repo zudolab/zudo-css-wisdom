@@ -259,9 +259,9 @@ is the acceptance criterion for Sub #58 (manager-side verification).
 Ported zcss-specific values from the current `src/config/settings.ts`
 (pre-rebuild zcss) into `__inbox/new-scaffold/src/config/settings.ts`. The
 scaffold's `settings.ts` shape remained the source of truth; only the
-values were updated, plus a small set of framework-required fields the
-scaffolder did not emit (see "Framework-required settings fields"
-below).
+values were updated. The companion `astro.config.ts` i18n block and
+`src/config/i18n.ts` default-locale constant were flipped to `en` to
+match the URL-shape override.
 
 ### URL-shape override — **EN is the URL default**
 
@@ -334,61 +334,54 @@ content into `src/content/docs/` as the settings now declare, but the
 actual URLs produced at build time will still be the scaffold's
 default shape. Sub #58 tracks the build-level verification.
 
-### Framework-required settings fields — **upstream bug**
+### Pre-existing `pnpm check` errors — **scaffolder bug, not our problem**
 
-**Tracked upstream:** https://github.com/zudolab/zudo-doc/issues/401
+**Tracked upstream (consolidated):**
+https://github.com/zudolab/zudo-doc/issues/405
+(supersedes earlier narrower issues `#401` and `#404`)
 
-The scaffold's source code references several `settings.*` fields
-(`tagPlacement`, `frontmatterPreview`, `tagVocabulary`,
-`tagGovernance`, `githubUrl`) in `src/pages/...` and
-`src/components/header.astro`, but the scaffolder's default
-`settings.ts` does **not** declare them. Without defaults,
-`pnpm check` fails with 11 `Property 'X' does not exist` errors on
-the fresh scaffold, even before any zcss-specific edits.
+A fresh `create-zudo-doc` scaffold fails `pnpm check` with **16
+TypeScript errors** out of the box, before any zcss-specific edit.
+Per the team-lead directive on the zcss epic: these errors are the
+scaffolder's problem — do **not** hand-patch settings or scaffold
+types to paper over them.
 
-Sub #49 adds safe defaults for these fields in the ported
-`settings.ts` to keep `pnpm check` green:
+The 16 errors fall into five categories:
 
-```ts
-tagPlacement: "after-title" as TagPlacement,
-frontmatterPreview: false as FrontmatterPreviewConfig | false,
-tagVocabulary: false as TagVocabularyEntry[] | false,
-tagGovernance: "off" as TagGovernanceMode,
-githubUrl: false as string | false,
-```
+1. **`settings-types.ts` does not declare fields the framework reads.**
+   Scaffold-emitted source reads `settings.githubUrl`,
+   `settings.tagPlacement`, `settings.frontmatterPreview`,
+   `settings.tagVocabulary`, and `settings.tagGovernance`, but none are
+   declared in the default `settings.ts` / `settings-types.ts`.
+   zcss does not use any of these features (no GitHub header link,
+   no doc-tags UI, no frontmatter preview, no tag vocabulary/governance),
+   so Sub #49 intentionally leaves them unpopulated.
+2. **`frontmatter-preview.astro` uses `cfg === false`** against a type
+   that has no `false` in its union — inconsistent internal typing.
+3. **`mermaid-init.astro` statically imports `mermaid`** unconditionally,
+   but the scaffolder only lists `mermaid` in `package.json` when the
+   preset enables the feature. zcss has `mermaid: false`, so the module
+   is absent and TypeScript errors on the dynamic import.
+4. **`LanguageSwitcher` prop shape mismatch** — `header.astro` passes a
+   `locales` prop the component's `Props` interface doesn't declare.
+5. **`frontmatter-preview.astro:76` unknown → {} JSX assignability.**
 
-These are **not** part of the zcss port spec — they are workarounds
-for a scaffolder completeness bug. Each declaration is commented in
-`settings.ts` with a reference to zudo-doc#401. Once the upstream fix
-lands and zcss re-scaffolds, these lines can be dropped (or kept if
-zcss wants to customise the values).
+Baseline (fresh scaffold, no edits): 16 errors.
+Post-Sub #49 (settings port complete): **still 16 errors** — Sub #49
+introduces **zero new TypeScript errors**.
 
-### Residual `pnpm check` errors (3 remaining) — **framework bugs**
-
-**Tracked upstream:** https://github.com/zudolab/zudo-doc/issues/404
-
-After the workarounds above, 3 TypeScript errors remain, all inside
-scaffold framework source and **not** resolvable via `settings.ts`:
-
-1. `src/components/header.astro:211` — `LanguageSwitcher` passed a
-   `locales` prop its `Props` type does not declare.
-2. `src/components/frontmatter-preview.astro:76` — `unknown` → `{}`
-   assignability mismatch in a JSX slot.
-3. `src/components/mermaid-init.astro:53` — `await import("mermaid")`
-   fails to resolve because the scaffold does not list `mermaid` in
-   `package.json` deps, even though the component is always emitted.
-
-Baseline `pnpm check` on the post-Sub-#48 scaffold (before Sub #49
-edits): 16 errors. Post-Sub #49 with workarounds: 3 errors, all
-pre-existing and unrelated to the settings port. Sub #49's changes
-introduce zero new TypeScript errors.
+These will only go away when zudo-doc#405 ships upstream (or zcss
+re-scaffolds against a fixed zudo-doc). Sub #58 picks up from here
+when deciding whether to re-scaffold or live with the errors until
+upstream resolves.
 
 ### Commit-by-commit trail
 
-- `chore(settings): port zcss site identity, color mode, feature flags`
-- `chore(settings): force EN-default URL override (docsDir + locales + astro.config.ts i18n)`
-- `chore(settings): add framework-required workarounds for zudo-doc#401`
+- `chore(settings): port zcss settings into scaffold + URL override + zudo-doc#401 workarounds`
+- `chore(astro-config): force EN-default i18n (defaultLocale=en)`
 - `docs: record Sub #49 URL-override and workaround rationale in MIGRATION_NOTES`
+- `chore(i18n): flip src/config/i18n.ts defaultLocale to "en" to match URL override`
+- `revert(settings): drop zudo-doc#401 workarounds per team-lead directive (consolidated to zudo-doc#405)`
 
 ### Values ported verbatim from the pre-rebuild zcss
 

@@ -6,10 +6,6 @@ export type {
   LocaleConfig,
   VersionConfig,
   FooterConfig,
-  TagPlacement,
-  FrontmatterPreviewConfig,
-  TagGovernanceMode,
-  TagVocabularyEntry,
 } from "./settings-types";
 import type {
   HeaderNavItem,
@@ -18,10 +14,6 @@ import type {
   LocaleConfig,
   VersionConfig,
   FooterConfig,
-  TagPlacement,
-  FrontmatterPreviewConfig,
-  TagGovernanceMode,
-  TagVocabularyEntry,
 } from "./settings-types";
 
 export const settings = {
@@ -39,9 +31,6 @@ export const settings = {
   noindex: false as boolean,
   editUrl: false as string | false,
   siteUrl: "https://takazudomodular.com/pj/zcss/" as string,
-  // Workaround for zudo-doc#401 — scaffold's header.astro reads settings.githubUrl
-  // but the default settings.ts doesn't declare it. Declared as false (no link).
-  githubUrl: false as string | false,
   // URL-shape override (see MIGRATION_NOTES.md → "URL-shape override — Sub #49"):
   // Preset ran with `defaultLang: "ja"` but zcss keeps EN as the URL-default locale
   // (EN at `/pj/zcss/docs/...`, JA at `/pj/zcss/ja/docs/...`). So `docsDir` is the
@@ -54,13 +43,6 @@ export const settings = {
   sitemap: true,
   docMetainfo: true,
   docTags: false,
-  // Workaround for zudo-doc#401 — framework reads these from settings but the
-  // scaffold default settings.ts doesn't declare them. Safe defaults keep
-  // `pnpm check` clean until the upstream generator is fixed.
-  tagPlacement: "after-title" as TagPlacement,
-  frontmatterPreview: false as FrontmatterPreviewConfig | false,
-  tagVocabulary: false as TagVocabularyEntry[] | false,
-  tagGovernance: "off" as TagGovernanceMode,
   llmsTxt: true,
   math: false,
   cjkFriendly: true as boolean,
