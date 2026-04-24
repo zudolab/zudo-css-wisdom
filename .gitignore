@@ -1,55 +1,31 @@
-# Dependencies
-node_modules/
+# --- Project-root artefacts (zcss-specific) ---
 
-# Build outputs
-dist/
-build/
-
-# Astro
-.astro/
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# IDE
-.idea/
-.vscode/
-*.sublime-*
-
-# Environment
-.env
-.env.local
-.env*.local
-
-# Logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-pnpm-debug.log*
-
-# Cloudflare
-.wrangler/
-
-# Playwright
-.playwright-cli/
-
-# Misc
+# Local staging / worktree scratch
 __inbox/
+worktrees/
+
+# zcss-specific unversioned data dirs
 src/data/
 doc/
 
-# Generated skill files (contain machine-specific absolute paths)
+# Generated Claude skill files (contain machine-specific absolute paths)
 .claude/skills/css-wisdom/SKILL.md
 .claude/skills/css-wisdom/docs
 .claude/skills/css-wisdom/docs-ja
 .claude/skills/zcss-wisdom/
 
-# Generated claude-resources docs (auto-generated at build time)
+# Auto-generated claude-resources docs (regenerated at build time)
 src/content/docs/claude/
 src/content/docs/claude-agents/
 src/content/docs/claude-md/
 src/content/docs/claude-skills/
 
-# Worktrees
-worktrees/
+# --- Scaffold-internal artefacts (zudo-doc defaults) ---
+
+node_modules
+dist
+.astro
+
+# Tauri build artifacts
+src-tauri/target
+src-tauri/gen

@@ -34,7 +34,10 @@ export default function TailwindPreview({
   defaultOpen,
   plugins,
 }: TailwindPreviewProps): ReactNode {
-  const srcdoc = useMemo(() => buildSrcdoc(html, css, plugins), [html, css, plugins]);
+  const srcdoc = useMemo(
+    () => buildSrcdoc(html, css, plugins),
+    [html, css, plugins],
+  );
 
   return (
     <PreviewBase
