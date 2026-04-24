@@ -81,10 +81,8 @@ All 13 features in the preset were applied. See `__inbox/new-scaffold/package.js
 | zudolab/zudo-doc#397 | `src/pages/en/index.astro` hardcodes 概要 as overview CTA label | With `defaultLang: "en"` there is no `src/pages/en/` dir, but the source template still has the bug for other consumers. Currently the EN landing is `src/pages/index.astro`; the JA landing `src/pages/ja/index.astro` may have the mirror bug (English literal on a JA page). To verify during Sub #58. |
 | zudolab/zudo-doc#399 | preset `cjkFriendly: true` does not propagate to `settings.ts` | Hand-flip `cjkFriendly: true` in settings.ts when porting (Sub #49 equivalent). |
 | zudolab/zudo-doc#400 | scaffolder bakes defaultLang into `src/pages/` directory names and locale literals | Worked around by changing preset `defaultLang` to `"en"` (the pivot above). |
-| zudolab/zudo-doc#401 | scaffold source references 5 settings fields not declared in default `settings.ts` (tagPlacement, frontmatterPreview, tagVocabulary, tagGovernance, githubUrl) | Causes 11 out-of-the-box `pnpm check` errors. Workaround: declare stubs in zcss settings.ts. |
 | zudolab/zudo-doc#402 | scaffold `.gitignore` missing `.DS_Store`, `.env`, `*.log`, `.wrangler` | Merged in by Sub #57 equivalent when porting `.gitignore`. |
-| zudolab/zudo-doc#403 | `settings.githubUrl` undeclared, `LanguageSwitcher` rejects locales prop, mermaid dep missing | Post-Sub #49 residual TS errors. |
-| zudolab/zudo-doc#404 | LanguageSwitcher prop, frontmatter-preview unknown-JSX, missing mermaid dep | Residual from the scaffolder; non-blocking for URL parity. |
+| zudolab/zudo-doc#405 | consolidated: 16 pre-existing `pnpm check` TS errors (settings-types gaps for tagPlacement/frontmatterPreview/tagVocabulary/tagGovernance/githubUrl, dangling scaffold references, unconditional mermaid import, LanguageSwitcher prop mismatch, frontmatter-preview JSX type) | Supersedes #401/#403/#404. zcss does not use any of these features, so no workaround needed in zcss settings.ts. The 16 errors persist in `pnpm check` until upstream fixes. Non-blocking for URL parity and content rendering. |
 
 ## Concerns for downstream
 
