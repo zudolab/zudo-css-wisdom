@@ -253,3 +253,151 @@ correct output. Logged here so they are not lost between sub-issues.
 build work in child agents. `pnpm install` succeeded and produced a clean
 lockfile, which is enough here. Full `pnpm build` in `__inbox/new-scaffold/`
 is the acceptance criterion for Sub #58 (manager-side verification).
+
+## Sub #49 — settings port + URL-shape override
+
+Ported zcss-specific values from the current `src/config/settings.ts`
+(pre-rebuild zcss) into `__inbox/new-scaffold/src/config/settings.ts`. The
+scaffold's `settings.ts` shape remained the source of truth; only the
+values were updated, plus a small set of framework-required fields the
+scaffolder did not emit (see "Framework-required settings fields"
+below).
+
+### URL-shape override — **EN is the URL default**
+
+The preset ran with `defaultLang: "ja"` (JA is the primary authoring
+language for zcss), but zcss's live site keeps **EN as the URL default**
+so external links and the `css-wisdom` skill's content references stay
+stable:
+
+- EN default: `/pj/zcss/docs/<slug>/`
+- JA additional: `/pj/zcss/ja/docs/<slug>/`
+
+To express this, `src/config/settings.ts` uses:
+
+```ts
+docsDir: "src/content/docs",              // EN root
+locales: { ja: { label: "JA", dir: "src/content/docs-ja" } },
+```
+
+And `astro.config.ts` was flipped to:
+
+```ts
+i18n: {
+  defaultLocale: "en",
+  locales: ["en", ...Object.keys(settings.locales)],
+  routing: { prefixDefaultLocale: false },
+},
+```
+
+### Known framework mismatch — `src/pages/` hardcoding
+
+**Tracked upstream:** https://github.com/zudolab/zudo-doc/issues/400
+
+The scaffolder bakes the non-default locale's directory name
+(`src/pages/en/...`) and internal locale-literal strings (`"ja"` / `"en"`
+threaded through `buildNavTree`, `buildBreadcrumbs`, `docsUrl`,
+`loadLocaleDocs`, `DocLayout lang=`, `t("…", "ja")`, etc.) at
+generation time, driven by the preset's `defaultLang`. With the
+URL-shape override applied via `settings.ts` + `astro.config.ts`, the
+`src/pages/` directory layout **does not match** the EN-default
+intent — it still emits `/en/docs/<slug>/` for the non-default locale
+and hardcodes `"ja"` for the default.
+
+Per the epic rule _"Do not hand-edit scaffold output to fix something
+the scaffolder should generate"_, Sub #49 intentionally does **not**
+rename `src/pages/en/` → `src/pages/ja/` or rewrite the hardcoded
+locale literals inside each page. The acceptance gate for Sub #49 is
+`pnpm check` (TypeScript); the full URL-parity build is Sub #58 and
+will either require a re-scaffold with `defaultLang: "en"` or an
+upstream fix in zudo-doc.
+
+Downstream impact: until zudo-doc#400 is resolved (or the repo is
+re-scaffolded with `defaultLang: "en"`), the content-migration
+sub-issues should move JA content into `src/content/docs-ja/` and EN
+content into `src/content/docs/` as the settings now declare, but the
+actual URLs produced at build time will still be the scaffold's
+default shape. Sub #58 tracks the build-level verification.
+
+### Framework-required settings fields — **upstream bug**
+
+**Tracked upstream:** https://github.com/zudolab/zudo-doc/issues/401
+
+The scaffold's source code references several `settings.*` fields
+(`tagPlacement`, `frontmatterPreview`, `tagVocabulary`,
+`tagGovernance`, `githubUrl`) in `src/pages/...` and
+`src/components/header.astro`, but the scaffolder's default
+`settings.ts` does **not** declare them. Without defaults,
+`pnpm check` fails with 11 `Property 'X' does not exist` errors on
+the fresh scaffold, even before any zcss-specific edits.
+
+Sub #49 adds safe defaults for these fields in the ported
+`settings.ts` to keep `pnpm check` green:
+
+```ts
+tagPlacement: "after-title" as TagPlacement,
+frontmatterPreview: false as FrontmatterPreviewConfig | false,
+tagVocabulary: false as TagVocabularyEntry[] | false,
+tagGovernance: "off" as TagGovernanceMode,
+githubUrl: false as string | false,
+```
+
+These are **not** part of the zcss port spec — they are workarounds
+for a scaffolder completeness bug. Each declaration is commented in
+`settings.ts` with a reference to zudo-doc#401. Once the upstream fix
+lands and zcss re-scaffolds, these lines can be dropped (or kept if
+zcss wants to customise the values).
+
+### Residual `pnpm check` errors (3 remaining) — **framework bugs**
+
+**Tracked upstream:** https://github.com/zudolab/zudo-doc/issues/404
+
+After the workarounds above, 3 TypeScript errors remain, all inside
+scaffold framework source and **not** resolvable via `settings.ts`:
+
+1. `src/components/header.astro:211` — `LanguageSwitcher` passed a
+   `locales` prop its `Props` type does not declare.
+2. `src/components/frontmatter-preview.astro:76` — `unknown` → `{}`
+   assignability mismatch in a JSX slot.
+3. `src/components/mermaid-init.astro:53` — `await import("mermaid")`
+   fails to resolve because the scaffold does not list `mermaid` in
+   `package.json` deps, even though the component is always emitted.
+
+Baseline `pnpm check` on the post-Sub-#48 scaffold (before Sub #49
+edits): 16 errors. Post-Sub #49 with workarounds: 3 errors, all
+pre-existing and unrelated to the settings port. Sub #49's changes
+introduce zero new TypeScript errors.
+
+### Commit-by-commit trail
+
+- `chore(settings): port zcss site identity, color mode, feature flags`
+- `chore(settings): force EN-default URL override (docsDir + locales + astro.config.ts i18n)`
+- `chore(settings): add framework-required workarounds for zudo-doc#401`
+- `docs: record Sub #49 URL-override and workaround rationale in MIGRATION_NOTES`
+
+### Values ported verbatim from the pre-rebuild zcss
+
+- `siteName: "zudo-css-wisdom"`,
+  `siteDescription: "Pragmatic CSS knowledge for AI"`,
+  `base: "/pj/zcss/"`,
+  `siteUrl: "https://takazudomodular.com/pj/zcss/"`.
+- `colorScheme: "Default Dark"` with `colorMode` dark-default,
+  `respectPrefersColorScheme: true`, `lightScheme: "Default Light"`,
+  `darkScheme: "Default Dark"`. Schemes verified present in
+  `src/config/color-schemes.ts`.
+- `trailingSlash: true`, `editUrl: false`, `docHistory: true`,
+  `llmsTxt: true`, `sidebarResizer: true`, `sidebarToggle: true`,
+  `docMetainfo: true`, `docTags: false`, `mermaid: false`,
+  `math: false`, `noindex: false`, `sitemap: true`,
+  `aiAssistant: false`, `colorTweakPanel: false`, `versions: false`,
+  `htmlPreview: undefined` (effectively off),
+  `claudeResources: { claudeDir: ".claude" }`.
+- `cjkFriendly: true` — the preset has `cjkFriendly: true` but the
+  scaffold default `settings.ts` ships `cjkFriendly: false`. Flipped
+  on here per Sub #48's "Concerns #1".
+- `headerNav` — 8 entries verbatim: Overview, Methodology, Layout,
+  Typography, Styling, Responsive, Interactive, Claude.
+- `footer.links` — one "Fundamentals" column with three items
+  (Tight Token Strategy, Component First Strategy, Three-Tier Color
+  Strategy), each with JA locale overrides.
+- `footer.copyright` — year-stamped HTML string verbatim.
