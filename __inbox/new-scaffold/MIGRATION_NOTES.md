@@ -216,36 +216,43 @@ the scaffold's `src/content/docs-en/` into `src/content/docs/` plus
    `Stream.Duplex` symbol names). Sub-issues that touch Node APIs should
    re-run `pnpm check` after porting.
 
-## Upstream bugs surfaced by codex review
+## Upstream bugs filed against zudo-doc
 
-A `/codex-review` pass on the Sub #48 diff flagged three issues inside the
-scaffolder output. Per the epic rule _"Do not hand-edit scaffold output to
-fix something the scaffolder should generate"_, Sub #48 intentionally does
-not patch them. They belong upstream at `zudo-doc` (via
-`/refer-another-project -u zudo-doc …`) so a future re-scaffold produces
-correct output. Logged here so they are not lost between sub-issues.
+A `/codex-review` pass on the Sub #48 diff plus a targeted look at the
+`cjkFriendly` plumbing surfaced four issues inside the scaffolder output.
+Per the epic rule _"Do not hand-edit scaffold output to fix something the
+scaffolder should generate"_, Sub #48 intentionally does not patch them —
+filed upstream at `zudolab/zudo-doc` so a future re-scaffold produces
+correct output.
 
-- **Breadcrumb trees use the wrong locale.**
-  `src/pages/en/docs/[...slug].astro` calls `buildNavTree("ja", …)` and
-  `src/pages/docs/[...slug].astro` calls `buildNavTree("en", …)` — so
-  English pages build their breadcrumb nav from the Japanese tree and vice
-  versa. Clicking a breadcrumb item cross-hops locales. Fix upstream in
-  zudo-doc's `templates/base/src/pages/.../[...slug].astro`.
-- **`pnpm b4push` referenced but not defined.** The scaffold ships
-  `.claude/skills/zudo-doc-version-bump/SKILL.md`, which instructs the
-  release workflow to run `pnpm b4push`. The scaffold's `package.json` has
-  no `b4push` script, so the skill dead-ends. Fix upstream: either have
-  `zudo-doc` emit a `b4push` stub in `package.json` for projects that opt
-  into `zudoDocVersionBump`, or soften the skill's hard dependency on that
-  script. (zcss already has its own `b4push` pipeline — Sub #54 restores
+- **zudolab/zudo-doc#393 — Breadcrumb trees use the wrong locale.**
+  `src/pages/en/docs/[...slug].astro` calls `buildNavTree(navDocs, "en", …)`
+  for the sidebar tree but `buildNavTree(allDocs, "ja", …)` for the
+  `fullTree` used by breadcrumbs, and `src/pages/docs/[...slug].astro`
+  calls `buildBreadcrumbs(fullTree, slug, "en")`. English pages build
+  their breadcrumb nav from the Japanese tree and vice versa. Clicking a
+  breadcrumb item cross-hops locales.
+- **zudolab/zudo-doc#395 — `pnpm b4push` referenced but not defined.**
+  The scaffold ships `.claude/skills/zudo-doc-version-bump/SKILL.md`, which
+  instructs the release workflow to run `pnpm b4push` (lines ~171, 178,
+  182). The scaffold's `package.json` has no `b4push` script, so the skill
+  dead-ends. zcss already has its own `b4push` pipeline — Sub #54 restores
   it, so zcss itself will be fine post-rebuild; the upstream concern is
-  other consumers of the template.)
-- **English homepage CTA hardcodes `概要`.**
-  `src/pages/en/index.astro` (line ~52) hardcodes the Japanese string
-  `概要` as the overview CTA label on the EN landing page. Fix upstream so
-  the EN template uses an English label (or threads the label through the
-  i18n dictionary). Downstream zcss may replace this page entirely in
-  Sub #57, but the upstream bug remains for other consumers.
+  other consumers of the template.
+- **zudolab/zudo-doc#397 — English homepage CTA hardcodes `概要`.**
+  `src/pages/en/index.astro` line ~52 hardcodes the Japanese string
+  `概要` as the overview CTA label on the EN landing page. Downstream zcss
+  may replace this page entirely in Sub #57, but the upstream bug remains
+  for other consumers.
+- **zudolab/zudo-doc#399 — `cjkFriendly` preset field does not
+  propagate.** The preset sets `cjkFriendly: true`; the scaffolder
+  installs `remark-cjk-friendly` and wires it into `astro.config.ts`
+  behind `settings.cjkFriendly`, but emits `src/config/settings.ts` with
+  `cjkFriendly: false` hardcoded. The root cause is in
+  `create-zudo-doc/src/preset.ts` — `presetToChoices` does not forward
+  `cjkFriendly` into `PartialChoices`, so `settings-gen.ts` never sees
+  the preset value. Sub #49 will flip `settings.cjkFriendly = true` while
+  porting settings, so zcss is unblocked.
 
 ## Build verification
 
