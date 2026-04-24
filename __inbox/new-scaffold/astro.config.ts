@@ -61,8 +61,11 @@ export default defineConfig({
       : []),
   ],
   i18n: {
-    defaultLocale: "ja",
-    locales: ["ja", ...Object.keys(settings.locales)],
+    // EN is the URL-default locale for zcss — see MIGRATION_NOTES.md
+    // ("URL-shape override — Sub #49"). The additional locales list is
+    // pulled from settings.locales (currently just `ja`).
+    defaultLocale: "en",
+    locales: ["en", ...Object.keys(settings.locales)],
     routing: {
       prefixDefaultLocale: false,
     },
