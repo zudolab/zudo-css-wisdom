@@ -216,6 +216,37 @@ the scaffold's `src/content/docs-en/` into `src/content/docs/` plus
    `Stream.Duplex` symbol names). Sub-issues that touch Node APIs should
    re-run `pnpm check` after porting.
 
+## Upstream bugs surfaced by codex review
+
+A `/codex-review` pass on the Sub #48 diff flagged three issues inside the
+scaffolder output. Per the epic rule _"Do not hand-edit scaffold output to
+fix something the scaffolder should generate"_, Sub #48 intentionally does
+not patch them. They belong upstream at `zudo-doc` (via
+`/refer-another-project -u zudo-doc …`) so a future re-scaffold produces
+correct output. Logged here so they are not lost between sub-issues.
+
+- **Breadcrumb trees use the wrong locale.**
+  `src/pages/en/docs/[...slug].astro` calls `buildNavTree("ja", …)` and
+  `src/pages/docs/[...slug].astro` calls `buildNavTree("en", …)` — so
+  English pages build their breadcrumb nav from the Japanese tree and vice
+  versa. Clicking a breadcrumb item cross-hops locales. Fix upstream in
+  zudo-doc's `templates/base/src/pages/.../[...slug].astro`.
+- **`pnpm b4push` referenced but not defined.** The scaffold ships
+  `.claude/skills/zudo-doc-version-bump/SKILL.md`, which instructs the
+  release workflow to run `pnpm b4push`. The scaffold's `package.json` has
+  no `b4push` script, so the skill dead-ends. Fix upstream: either have
+  `zudo-doc` emit a `b4push` stub in `package.json` for projects that opt
+  into `zudoDocVersionBump`, or soften the skill's hard dependency on that
+  script. (zcss already has its own `b4push` pipeline — Sub #54 restores
+  it, so zcss itself will be fine post-rebuild; the upstream concern is
+  other consumers of the template.)
+- **English homepage CTA hardcodes `概要`.**
+  `src/pages/en/index.astro` (line ~52) hardcodes the Japanese string
+  `概要` as the overview CTA label on the EN landing page. Fix upstream so
+  the EN template uses an English label (or threads the label through the
+  i18n dictionary). Downstream zcss may replace this page entirely in
+  Sub #57, but the upstream bug remains for other consumers.
+
 ## Build verification
 
 **Not** run in Sub #48 by design — `/x-wt-teams` rules ban heavy test /
