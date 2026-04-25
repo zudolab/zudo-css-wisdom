@@ -270,9 +270,9 @@ const className = `p-4 bg-${shade}-500`;
 - **ファイルレベルのエスケープハッチ。** ファイル全体の ignore はほぼ常に間違いです ―― そのファイルに今後追加されるあらゆる生リテラルを暗黙に免除してしまうからです。本当にファイル全体をオプトアウトする必要があるなら、`.design-token-lint.json` の `ignore` glob のほうが正直です。プロジェクトの lint 設定に現れるので、CSS コメント内に隠れません。
 
 ```css
-/* design-token-lint-ignore */
 /* Legacy: this colour matches the old brand asset PNG that finance still uses. */
 /* Tracked at #1234 — remove once the asset is regenerated.                     */
+/* design-token-lint-ignore */
 .invoice-banner {
   background: #0066ff;
 }
@@ -311,8 +311,8 @@ Pass 2（ゾーン認識セマンティックトークン）と Pass 3（生 z-i
   color: var(--color-toast-fg);
 }
 
-/* design-token-lint-ignore */
 /* Brand-mandated exact colour for the legacy yellow toast — tracked at #5678. */
+/* design-token-lint-ignore */
 .legacy-toast--brand {
   background: #ffaa00;
 }

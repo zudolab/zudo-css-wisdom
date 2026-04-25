@@ -270,9 +270,9 @@ Two anti-patterns to watch for:
 - **File-level escape hatches.** A whole-file ignore is almost always a mistake — it silently exempts every future raw literal added to that file. If a file genuinely needs to opt out, a `.design-token-lint.json` `ignore` glob is more honest because it appears in the project's lint config rather than being hidden in a CSS comment.
 
 ```css
-/* design-token-lint-ignore */
 /* Legacy: this colour matches the old brand asset PNG that finance still uses. */
 /* Tracked at #1234 — remove once the asset is regenerated.                     */
+/* design-token-lint-ignore */
 .invoice-banner {
   background: #0066ff;
 }
@@ -311,8 +311,8 @@ A component CSS file with two violations and one legitimate escape:
   color: var(--color-toast-fg);
 }
 
-/* design-token-lint-ignore */
 /* Brand-mandated exact colour for the legacy yellow toast — tracked at #5678. */
+/* design-token-lint-ignore */
 .legacy-toast--brand {
   background: #ffaa00;
 }

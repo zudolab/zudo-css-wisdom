@@ -279,16 +279,18 @@ If the child needs to render above unrelated UI (e.g. a popover that must sit ab
       overflow: hidden;
       min-height: 140px;
       box-shadow: 0 4px 16px hsl(222 47% 11% / 0.12);
+      --z-local-1: 1;
+      --z-local-2: 2;
     }
     .zlocal-demo__bg {
       position: absolute;
       inset: 0;
-      z-index: 1;
+      z-index: var(--z-local-1);
       background: linear-gradient(135deg, hsl(220 80% 50%), hsl(260 70% 45%));
     }
     .zlocal-demo__body {
       position: relative;
-      z-index: 2;
+      z-index: var(--z-local-2);
       color: hsl(0 0% 100%);
       padding: 1rem 1.25rem;
       display: flex;
@@ -331,6 +333,9 @@ The same `--z-local-1` token applies to every isolated parent. There is no need 
       background: hsl(210 20% 96%);
       border-radius: 8px;
       overflow: hidden;
+      --z-toolbar: 10;
+      --z-modal: 60;
+      --z-tooltip: 80;
     }
     .zsib-demo__content {
       position: absolute;
@@ -346,7 +351,7 @@ The same `--z-local-1` token applies to every isolated parent. There is no need 
       top: 1rem;
       left: 1rem;
       right: 1rem;
-      z-index: 10;
+      z-index: var(--z-toolbar);
       padding: 0.5rem 0.75rem;
       background: hsl(220 80% 50%);
       color: hsl(0 0% 100%);
@@ -358,7 +363,7 @@ The same `--z-local-1` token applies to every isolated parent. There is no need 
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      z-index: 60;
+      z-index: var(--z-modal);
       padding: 1rem 1.5rem;
       background: hsl(280 60% 45%);
       color: hsl(0 0% 100%);
@@ -370,7 +375,7 @@ The same `--z-local-1` token applies to every isolated parent. There is no need 
       position: absolute;
       bottom: 1rem;
       right: 1rem;
-      z-index: 80;
+      z-index: var(--z-tooltip);
       padding: 0.4rem 0.6rem;
       background: hsl(0 0% 10%);
       color: hsl(0 0% 100%);
@@ -387,7 +392,7 @@ A token system that is not enforced is a token system that decays. Add a lint ru
 | `z-index: var(--z-modal);` | `z-index: 100;` |
 | `z-index: calc(var(--z-modal) + 1);` | `z-index: 999;` |
 | `z-index: auto;` / `inherit;` / `initial;` | `z-index: 9999;` |
-| Raw integer with `/* lint-ignore-z-index */` escape hatch | Bare raw integer with no escape comment |
+| Raw integer with `/* design-token-lint-ignore */` escape hatch | Bare raw integer with no escape comment |
 
 The escape hatch matters. Some legitimate cases (a one-off third-party widget integration, an experimental layer) need a raw integer with a code comment explaining why — block by default, but do not block forever.
 
